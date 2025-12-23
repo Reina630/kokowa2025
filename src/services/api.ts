@@ -1,7 +1,9 @@
 import axios from 'axios';
 
 // Configuration de l'URL de base de l'API
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://nanouar.pythonanywhere.com/api/v1';
+
+//const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api/v1';
 
 // Instance Axios configurée
 const api = axios.create({
