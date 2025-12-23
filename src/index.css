@@ -1,0 +1,222 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Kokowa 2025 Design System - Dark, Cinematic, Combat Sports */
+
+@layer base {
+  :root {
+    /* Core Colors - Dark Theme */
+    --background: 15 10% 5%;
+    --foreground: 0 0% 98%;
+    
+    /* Card surfaces */
+    --card: 15 10% 8%;
+    --card-foreground: 0 0% 98%;
+    
+    /* Popover */
+    --popover: 15 10% 10%;
+    --popover-foreground: 0 0% 98%;
+    
+    /* Primary - Orange Accent */
+    --primary: 25 95% 53%;
+    --primary-foreground: 0 0% 100%;
+    
+    /* Secondary - Muted Dark */
+    --secondary: 15 10% 15%;
+    --secondary-foreground: 0 0% 85%;
+    
+    /* Muted */
+    --muted: 15 5% 20%;
+    --muted-foreground: 0 0% 60%;
+    
+    /* Accent - Orange Glow */
+    --accent: 25 95% 53%;
+    --accent-foreground: 0 0% 100%;
+    
+    /* Destructive */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    
+    /* Borders */
+    --border: 15 10% 18%;
+    --input: 15 10% 18%;
+    --ring: 25 95% 53%;
+    
+    --radius: 0.5rem;
+    
+    /* Custom Colors */
+    --gold: 45 90% 50%;
+    --gold-foreground: 0 0% 10%;
+    --olive: 75 30% 25%;
+    --olive-foreground: 0 0% 98%;
+    
+    /* Gradients */
+    --gradient-dark: linear-gradient(180deg, hsl(15 10% 8%) 0%, hsl(15 10% 3%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(15 10% 5% / 0.9) 0%, hsl(15 10% 3% / 0.95) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(15 10% 12%) 0%, hsl(15 10% 8%) 100%);
+    --gradient-orange: linear-gradient(135deg, hsl(25 95% 53%) 0%, hsl(30 100% 45%) 100%);
+    
+    /* Shadows */
+    --shadow-glow: 0 0 40px hsl(25 95% 53% / 0.3);
+    --shadow-card: 0 10px 40px hsl(0 0% 0% / 0.5);
+    --shadow-button: 0 4px 20px hsl(25 95% 53% / 0.4);
+    
+    /* Animations */
+    --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Sidebar */
+    --sidebar-background: 15 10% 5%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 25 95% 53%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 15 10% 15%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 15 10% 18%;
+    --sidebar-ring: 25 95% 53%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+    background: var(--gradient-dark);
+    min-height: 100vh;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading font-bold tracking-tight;
+  }
+}
+
+@layer components {
+  /* Hero Button Variants */
+  .btn-hero-primary {
+    @apply relative overflow-hidden bg-gradient-to-r from-primary to-orange-500 text-primary-foreground font-heading font-semibold uppercase tracking-wider px-8 py-4 rounded-lg transition-all duration-300;
+    box-shadow: var(--shadow-button);
+  }
+  
+  .btn-hero-primary:hover {
+    @apply scale-105;
+    box-shadow: 0 6px 30px hsl(25 95% 53% / 0.6);
+  }
+  
+  .btn-hero-primary:active {
+    @apply scale-95;
+  }
+  
+  .btn-hero-secondary {
+    @apply relative border-2 border-foreground/80 text-foreground font-heading font-semibold uppercase tracking-wider px-8 py-4 rounded-lg bg-transparent transition-all duration-300;
+  }
+  
+  .btn-hero-secondary:hover {
+    @apply bg-foreground/10 border-foreground;
+  }
+  
+  .btn-hero-secondary:active {
+    @apply scale-95;
+  }
+  
+  /* Fighter Card */
+  .fighter-card {
+    @apply relative rounded-xl overflow-hidden transition-all duration-500;
+    background: var(--gradient-card);
+    box-shadow: var(--shadow-card);
+  }
+  
+  .fighter-card:hover {
+    @apply scale-[1.02];
+    box-shadow: 0 15px 50px hsl(0 0% 0% / 0.6);
+  }
+  
+  /* VS Badge */
+  .vs-badge {
+    @apply absolute font-heading font-bold text-6xl md:text-8xl text-foreground/20;
+    text-shadow: 0 0 40px hsl(25 95% 53% / 0.3);
+  }
+  
+  /* Glow effect */
+  .glow-orange {
+    box-shadow: var(--shadow-glow);
+  }
+  
+  /* Status badges */
+  .badge-active {
+    @apply bg-green-500/20 text-green-400 border border-green-500/30;
+  }
+  
+  .badge-eliminated {
+    @apply bg-red-500/20 text-red-400 border border-red-500/30;
+  }
+  
+  /* Animated counter */
+  .counter-animate {
+    @apply tabular-nums;
+  }
+  
+  /* Mobile nav */
+  .mobile-nav-item {
+    @apply block py-4 px-6 text-lg font-heading font-medium uppercase tracking-wider text-foreground/80 hover:text-primary transition-colors;
+  }
+}
+
+@layer utilities {
+  /* Text gradient */
+  .text-gradient-orange {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-orange-400;
+  }
+  
+  /* Cinematic overlay */
+  .cinematic-overlay {
+    background: linear-gradient(to top, hsl(15 10% 3%) 0%, transparent 50%, hsl(15 10% 3% / 0.5) 100%);
+  }
+  
+  /* Thumb-friendly touch targets */
+  .touch-target {
+    @apply min-h-[48px] min-w-[48px];
+  }
+
+  /* Phone Input Customization for react-phone-input-2 */
+  .phone-input-container {
+    @apply w-full;
+  }
+  
+  .phone-input-field {
+    @apply w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all !important;
+    padding-left: 48px !important;
+    height: 48px !important;
+  }
+  
+  .phone-input-button {
+    @apply bg-secondary border-border hover:bg-secondary/80 !important;
+  }
+  
+  .phone-input-dropdown {
+    @apply bg-card border border-border shadow-lg !important;
+  }
+  
+  .phone-input-dropdown .search-box {
+    @apply bg-secondary border-border text-foreground placeholder:text-muted-foreground !important;
+    padding: 8px !important;
+  }
+  
+  .phone-input-dropdown .country {
+    @apply hover:bg-secondary text-foreground !important;
+  }
+  
+  .phone-input-dropdown .country.highlight {
+    @apply bg-primary/20 !important;
+  }
+}

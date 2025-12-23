@@ -1,0 +1,684 @@
+import { useState, useEffect, useMemo } from "react";
+import { motion } from "framer-motion";
+import { Trophy, Target, Heart, Gift, Calendar, User, MapPin, Search, Filter, ChevronLeft, ChevronRight, Swords, Star } from "lucide-react";
+import Layout from "@/components/layout/Layout";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import affrontementsService from "@/services/affrontementsService";
+import lutteursService, { Lutteur } from "@/services/lutteursService";
+import historiqueService from "@/services/historiqueService";
+
+interface Fight {
+  id: number;
+  date: string;
+  fighter1: string;
+  fighter2: string;
+  winner: string | null;
+  region1: string;
+  region2: string;
+  phase: string;
+}
+
+interface Prediction {
+  id: number;
+  date: string;
+  phone: string;
+  fight: string;
+  prediction: string;
+  result: "correct" | "incorrect" | "pending";
+}
+
+interface Support {
+  id: number;
+  date: string;
+  fighter: string;
+  type: string;
+}
+
+const getResultBadge = (result: Prediction["result"]) => {
+  switch (result) {
+    case "correct":
+      return <span className="px-2 py-1 text-xs rounded-full bg-emerald-500/20 text-emerald-400">🎉 Gagné</span>;
+    case "incorrect":
+      return <span className="px-2 py-1 text-xs rounded-full bg-red-500/20 text-red-400">❌ Perdu</span>;
+    case "pending":
+      return <span className="px-2 py-1 text-xs rounded-full bg-yellow-500/20 text-yellow-400">⏳ En attente</span>;
+  }
+};
+
+const ChroniquesPage = () => {
+  const [fights, setFights] = useState<Fight[]>([]);
+  const [predictions, setPredictions] = useState<Prediction[]>([]);
+  const [supports, setSupports] = useState<Support[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [lutteurs, setLutteurs] = useState<{[key: string]: Lutteur}>({});
+  
+  // États pour les filtres et recherche
+  const [searchTerm, setSearchTerm] = useState("");
+  const [phaseFilter, setPhaseFilter] = useState<string>("all");
+  const [resultFilter, setResultFilter] = useState<string>("all");
+  const [typeFilter, setTypeFilter] = useState<string>("all");
+  
+  // États pour la pagination
+  const [fightPage, setFightPage] = useState(1);
+  const [predictionPage, setPredictionPage] = useState(1);
+  const [supportPage, setSupportPage] = useState(1);
+  const itemsPerPage = 10;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [affrontementsData, lutteursData, pronosticsData, soutiensData] = await Promise.all([
+          affrontementsService.getAffrontements(),
+          lutteursService.getLutteurs(),
+          historiqueService.getPronostics(),
+          historiqueService.getSoutiens()
+        ]);
+
+        // Créer un mapping des lutteurs par ID
+        const lutteursMap: {[key: string]: Lutteur} = {};
+        lutteursData.forEach(l => {
+          lutteursMap[l.id] = l;
+        });
+        setLutteurs(lutteursMap);
+
+        // Transformer tous les affrontements en fights
+        const fightsList: Fight[] = affrontementsData
+          .map(aff => ({
+            id: aff.id,
+            date: new Date(aff.date).toLocaleDateString('fr-FR'),
+            fighter1: lutteursMap[aff.l1]?.nom || 'Inconnu',
+            fighter2: lutteursMap[aff.l2]?.nom || 'Inconnu',
+            winner: aff.vainqueur ? lutteursMap[aff.vainqueur]?.nom || null : null,
+            region1: lutteursMap[aff.l1]?.region || '',
+            region2: lutteursMap[aff.l2]?.region || '',
+            phase: aff.etape
+          }));
+        setFights(fightsList);
+
+        // Transformer les pronostics
+        const predictionsList: Prediction[] = pronosticsData.map(p => {
+          const aff = affrontementsData.find(a => a.id === p.affrontement);
+          const choixNom = p.choix === 'l1' 
+            ? lutteursMap[aff?.l1 || '']?.nom 
+            : lutteursMap[aff?.l2 || '']?.nom;
+          
+          // Utiliser le résultat de l'API
+          let result: "correct" | "incorrect" | "pending" = "pending";
+          if (p.resultat === "gagne") {
+            result = "correct";
+          } else if (p.resultat === "perdu") {
+            result = "incorrect";
+          }
+
+          return {
+            id: p.id,
+            date: new Date(p.date_vote).toLocaleDateString('fr-FR'),
+            phone: p.numero_telephone.slice(-4),
+            fight: `${lutteursMap[aff?.l1 || '']?.nom || 'Inconnu'} vs ${lutteursMap[aff?.l2 || '']?.nom || 'Inconnu'}`,
+            prediction: choixNom || 'Inconnu',
+            result
+          };
+        });
+        setPredictions(predictionsList);
+
+        // Transformer les soutiens
+        const supportsList: Support[] = soutiensData.map((s, index) => ({
+          id: s.id || index,
+          date: new Date(s.cree_le).toLocaleDateString('fr-FR'),
+          fighter: lutteursMap[s.lutteur]?.nom || 'Inconnu',
+          type: s.raison
+        }));
+        setSupports(supportsList);
+
+      } catch (error) {
+        console.error("Erreur lors du chargement de l'historique:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Données filtrées
+  const filteredFights = useMemo(() => {
+    return fights.filter(fight => {
+      const matchesSearch = searchTerm === "" || 
+        fight.fighter1.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        fight.fighter2.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        fight.winner?.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesPhase = phaseFilter === "all" || fight.phase === phaseFilter;
+      return matchesSearch && matchesPhase;
+    });
+  }, [fights, searchTerm, phaseFilter]);
+
+  const filteredPredictions = useMemo(() => {
+    return predictions.filter(pred => {
+      const matchesSearch = searchTerm === "" || 
+        pred.fight.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        pred.prediction.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesResult = resultFilter === "all" || pred.result === resultFilter;
+      return matchesSearch && matchesResult;
+    });
+  }, [predictions, searchTerm, resultFilter]);
+
+  const filteredSupports = useMemo(() => {
+    return supports.filter(support => {
+      const matchesSearch = searchTerm === "" || 
+        support.fighter.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesType = typeFilter === "all" || support.type === typeFilter;
+      return matchesSearch && matchesType;
+    });
+  }, [supports, searchTerm, typeFilter]);
+
+  // Obtenir les valeurs uniques pour les filtres
+  const phases = useMemo(() => {
+    const phasesFromData = [...new Set(fights.map(f => f.phase))];
+    const allPossiblePhases = ['Finale', 'Demi-finale', '3ème place', 'Quart de finale', '8èmes de finale'];
+    // Combine les phases existantes avec celles possibles, en gardant l'ordre logique
+    return allPossiblePhases.filter(p => phasesFromData.includes(p) || allPossiblePhases.indexOf(p) < 3);
+  }, [fights]);
+  const supportTypes = useMemo(() => [...new Set(supports.map(s => s.type))], [supports]);
+
+  // Pagination
+  const paginatedFights = useMemo(() => {
+    const startIndex = (fightPage - 1) * itemsPerPage;
+    return filteredFights.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredFights, fightPage]);
+
+  const paginatedPredictions = useMemo(() => {
+    const startIndex = (predictionPage - 1) * itemsPerPage;
+    return filteredPredictions.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredPredictions, predictionPage]);
+
+  const paginatedSupports = useMemo(() => {
+    const startIndex = (supportPage - 1) * itemsPerPage;
+    return filteredSupports.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredSupports, supportPage]);
+
+  const totalFightPages = Math.ceil(filteredFights.length / itemsPerPage);
+  const totalPredictionPages = Math.ceil(filteredPredictions.length / itemsPerPage);
+  const totalSupportPages = Math.ceil(filteredSupports.length / itemsPerPage);
+
+  return (
+    <Layout>
+      <div className="pt-24 pb-16 min-h-screen">
+        <div className="container mx-auto px-4">
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center mb-12"
+          >
+            <h1 className="font-heading text-4xl md:text-5xl font-bold uppercase bg-gradient-to-r from-primary via-yellow-500 to-orange-500 bg-clip-text text-transparent mb-4">
+              Historique
+            </h1>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              L'historique complet des activités de la plateforme
+            </p>
+          </motion.div>
+
+          {loading ? (
+            <div className="flex justify-center items-center py-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            </div>
+          ) : (
+          <>
+          {/* Barre de recherche et filtres */}
+          {/* <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 flex flex-col md:flex-row gap-4"
+          >
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
+              <Input
+                placeholder="Rechercher..."
+                value={searchTerm}
+                onChange={(e) => { setSearchTerm(e.target.value); setFightPage(1); setPredictionPage(1); setSupportPage(1); }}
+                className="pl-10 bg-card border-border/50"
+              />
+            </div>
+          </motion.div> */}
+
+          {/* Tabs */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            <Tabs defaultValue="fights" className="w-full" onValueChange={() => { setSearchTerm(""); setFightPage(1); setPredictionPage(1); setSupportPage(1); }}>
+              <TabsList className="w-full flex flex-wrap justify-center gap-2 bg-transparent h-auto mb-8">
+                <TabsTrigger
+                  value="fights"
+                  className="flex items-center gap-2 px-4 py-3 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground rounded-lg border border-border/50 data-[state=active]:border-primary data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20"
+                >
+                  <Swords size={18} className="text-yellow-500" />
+                  <span>Affrontements</span>
+                  <span className="ml-1 px-2 py-0.5 text-xs rounded-full bg-orange-500/20 text-orange-400 font-semibold">{filteredFights.length}</span>
+                </TabsTrigger>
+                <TabsTrigger
+                  value="predictions"
+                  className="flex items-center gap-2 px-4 py-3 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground rounded-lg border border-border/50 data-[state=active]:border-primary data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20"
+                >
+                  <Target size={18} className="text-blue-500" />
+                  <span>Pronostics</span>
+                  <span className="ml-1 px-2 py-0.5 text-xs rounded-full bg-blue-500/20 text-blue-400 font-semibold">{filteredPredictions.length}</span>
+                </TabsTrigger>
+                <TabsTrigger
+                  value="supports"
+                  className="flex items-center gap-2 px-4 py-3 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground rounded-lg border border-border/50 data-[state=active]:border-primary data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20"
+                >
+                  <Heart size={18} className="text-red-500" />
+                  <span>Soutiens</span>
+                  <span className="ml-1 px-2 py-0.5 text-xs rounded-full bg-red-500/20 text-red-400 font-semibold">{filteredSupports.length}</span>
+                </TabsTrigger>
+                <TabsTrigger
+                  value="rewards"
+                  className="flex items-center gap-2 px-4 py-3 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground rounded-lg border border-border/50 data-[state=active]:border-primary data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20"
+                >
+                  <Gift size={18} className="text-purple-500" />
+                  <span>Gratifications</span>
+                  <span className="ml-1 px-2 py-0.5 text-xs rounded-full bg-purple-500/20 text-purple-400 font-semibold">0</span>
+                </TabsTrigger>
+              </TabsList>
+
+              {/* Fights Tab */}
+              <TabsContent value="fights">
+                <div className="mb-4 flex gap-2 items-center">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
+                    <Input
+                      placeholder="Rechercher..."
+                      value={searchTerm}
+                      onChange={(e) => { setSearchTerm(e.target.value); setFightPage(1); }}
+                      className="pl-10 bg-card border-border/50"
+                    />
+                  </div>
+                  <Select value={phaseFilter} onValueChange={(v) => { setPhaseFilter(v); setFightPage(1); }}>
+                    <SelectTrigger className="w-[200px] bg-card border-border/50">
+                      <SelectValue placeholder="Filtrer par phase" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Toutes les phases</SelectItem>
+                      {phases.map(phase => (
+                        <SelectItem key={phase} value={phase}>{phase}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="rounded-xl border border-border/50 bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-sm overflow-hidden shadow-lg shadow-primary/5">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="border-border/50 hover:bg-transparent bg-primary/5">
+                        <TableHead className="text-muted-foreground font-heading uppercase text-xs">Date</TableHead>
+                        <TableHead className="text-muted-foreground font-heading uppercase text-xs">Lutteur 1</TableHead>
+                        <TableHead className="text-muted-foreground font-heading uppercase text-xs">Lutteur 2</TableHead>
+                        <TableHead className="text-muted-foreground font-heading uppercase text-xs">Vainqueur</TableHead>
+                        <TableHead className="text-muted-foreground font-heading uppercase text-xs hidden lg:table-cell">Phase</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredFights.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                            Aucun affrontement trouvé
+                          </TableCell>
+                        </TableRow>
+                      ) : paginatedFights.map((fight, index) => (
+                        <tr
+                          key={fight.id}
+                          className="border-border/30 hover:bg-primary/5"
+                        >
+                          <motion.td
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                            className="text-sm text-muted-foreground"
+                          >
+                            <span className="flex items-center gap-1.5">
+                              <Calendar size={14} className="text-orange-500" />
+                              {fight.date}
+                            </span>
+                          </motion.td>
+                          <motion.td
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                            className="font-medium text-foreground"
+                          >
+                            {fight.fighter1}
+                          </motion.td>
+                          <motion.td
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                            className="font-medium text-foreground"
+                          >
+                            {fight.fighter2}
+                          </motion.td>
+                          <motion.td
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                          >
+                            {fight.winner ? (
+                              <span className="flex items-center gap-1.5 text-yellow-400 font-semibold">
+                                <Star size={14} className="fill-yellow-500" />
+                                {fight.winner}
+                              </span>
+                            ) : (
+                              <span className="text-muted-foreground">-</span>
+                            )}
+                          </motion.td>
+                          <motion.td
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                            className="text-muted-foreground hidden lg:table-cell"
+                          >
+                            <span className="px-2 py-1 rounded text-xs font-medium bg-primary/20 text-primary">
+                              {fight.phase}
+                            </span>
+                          </motion.td>
+                        </tr>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+                {filteredFights.length > 0 && totalFightPages > 1 && (
+                  <div className="flex items-center justify-between mt-4">
+                    <p className="text-sm text-muted-foreground">
+                      Page {fightPage} sur {totalFightPages} ({filteredFights.length} résultat{filteredFights.length > 1 ? 's' : ''})
+                    </p>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setFightPage(p => Math.max(1, p - 1))}
+                        disabled={fightPage === 1}
+                      >
+                        <ChevronLeft size={16} />
+                        Précédent
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setFightPage(p => Math.min(totalFightPages, p + 1))}
+                        disabled={fightPage === totalFightPages}
+                      >
+                        Suivant
+                        <ChevronRight size={16} />
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </TabsContent>
+
+              {/* Predictions Tab */}
+              <TabsContent value="predictions">
+                <div className="mb-4 flex gap-2 items-center">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
+                    <Input
+                      placeholder="Rechercher..."
+                      value={searchTerm}
+                      onChange={(e) => { setSearchTerm(e.target.value); setPredictionPage(1); }}
+                      className="pl-10 bg-card border-border/50"
+                    />
+                  </div>
+                  <Select value={resultFilter} onValueChange={(v) => { setResultFilter(v); setPredictionPage(1); }}>
+                    <SelectTrigger className="w-[200px] bg-card border-border/50">
+                      <SelectValue placeholder="Filtrer par résultat" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Tous les résultats</SelectItem>
+                      <SelectItem value="correct">Correct</SelectItem>
+                      <SelectItem value="incorrect">Incorrect</SelectItem>
+                      <SelectItem value="pending">En attente</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="rounded-xl border border-border/50 bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-sm overflow-hidden shadow-lg shadow-primary/5">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="border-border/50 hover:bg-transparent bg-primary/5">
+                        <TableHead className="text-muted-foreground font-heading uppercase text-xs hidden sm:table-cell">Date</TableHead>
+                        <TableHead className="text-muted-foreground font-heading uppercase text-xs hidden md:table-cell">Téléphone</TableHead>
+                        <TableHead className="text-muted-foreground font-heading uppercase text-xs">Combat</TableHead>
+                        <TableHead className="text-muted-foreground font-heading uppercase text-xs">Prédiction</TableHead>
+                        <TableHead className="text-muted-foreground font-heading uppercase text-xs">Résultat</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredPredictions.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                            Aucun pronostic trouvé
+                          </TableCell>
+                        </TableRow>
+                      ) : paginatedPredictions.map((prediction, index) => (
+                        <tr
+                          key={prediction.id}
+                          className="border-border/30 hover:bg-primary/5"
+                        >
+                          <motion.td
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                            className="text-sm text-muted-foreground hidden sm:table-cell"
+                          >
+                            <span className="flex items-center gap-1.5">
+                              <Calendar size={14} className="text-blue-500" />
+                              {prediction.date}
+                            </span>
+                          </motion.td>
+                          <motion.td
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                            className="hidden md:table-cell"
+                          >
+                            <span className="flex items-center gap-1.5 text-foreground">
+                              <User size={14} className="text-purple-500" />
+                              ***{prediction.phone}
+                            </span>
+                          </motion.td>
+                          <motion.td
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                            className="font-medium text-foreground text-xs sm:text-sm"
+                          >
+                            <span className="line-clamp-2">{prediction.fight}</span>
+                          </motion.td>
+                          <motion.td
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                            className="text-muted-foreground text-xs sm:text-sm"
+                          >
+                            <span className="line-clamp-1">{prediction.prediction}</span>
+                          </motion.td>
+                          <motion.td
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                          >
+                            {getResultBadge(prediction.result)}
+                          </motion.td>
+                        </tr>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+                {filteredPredictions.length > 0 && totalPredictionPages > 1 && (
+                  <div className="flex items-center justify-between mt-4">
+                    <p className="text-sm text-muted-foreground">
+                      Page {predictionPage} sur {totalPredictionPages} ({filteredPredictions.length} résultat{filteredPredictions.length > 1 ? 's' : ''})
+                    </p>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPredictionPage(p => Math.max(1, p - 1))}
+                        disabled={predictionPage === 1}
+                      >
+                        <ChevronLeft size={16} />
+                        Précédent
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPredictionPage(p => Math.min(totalPredictionPages, p + 1))}
+                        disabled={predictionPage === totalPredictionPages}
+                      >
+                        Suivant
+                        <ChevronRight size={16} />
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </TabsContent>
+
+              {/* Supports Tab */}
+              <TabsContent value="supports">
+                <div className="mb-4 flex gap-2 items-center">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
+                    <Input
+                      placeholder="Rechercher..."
+                      value={searchTerm}
+                      onChange={(e) => { setSearchTerm(e.target.value); setSupportPage(1); }}
+                      className="pl-10 bg-card border-border/50"
+                    />
+                  </div>
+                  <Select value={typeFilter} onValueChange={(v) => { setTypeFilter(v); setSupportPage(1); }}>
+                    <SelectTrigger className="w-[200px] bg-card border-border/50">
+                      <SelectValue placeholder="Filtrer par type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Tous les types</SelectItem>
+                      {supportTypes.map(type => (
+                        <SelectItem key={type} value={type}>{type}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="rounded-xl border border-border/50 bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-sm overflow-hidden shadow-lg shadow-primary/5">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="border-border/50 hover:bg-transparent bg-primary/5">
+                        <TableHead className="text-muted-foreground font-heading uppercase text-xs">Date</TableHead>
+                        <TableHead className="text-muted-foreground font-heading uppercase text-xs">Lutteur</TableHead>
+                        <TableHead className="text-muted-foreground font-heading uppercase text-xs">Type</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredSupports.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={3} className="text-center text-muted-foreground py-8">
+                            Aucun soutien trouvé
+                          </TableCell>
+                        </TableRow>
+                      ) : paginatedSupports.map((support, index) => (
+                        <tr
+                          key={support.id}
+                          className="border-border/30 hover:bg-primary/5"
+                        >
+                          <motion.td
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                            className="text-sm text-muted-foreground"
+                          >
+                            <span className="flex items-center gap-1.5">
+                              <Calendar size={14} className="text-green-500" />
+                              {support.date}
+                            </span>
+                          </motion.td>
+                          <motion.td
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                          >
+                            <span className="flex items-center gap-1.5 text-foreground">
+                              <User size={14} className="text-blue-500" />
+                              {support.fighter}
+                            </span>
+                          </motion.td>
+                          <motion.td
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                          >
+                            <span className="flex items-center gap-1.5 text-red-400">
+                              <Heart size={14} className="fill-red-500 text-red-500" />
+                              {support.type}
+                            </span>
+                          </motion.td>
+                        </tr>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+                {filteredSupports.length > 0 && totalSupportPages > 1 && (
+                  <div className="flex items-center justify-between mt-4">
+                    <p className="text-sm text-muted-foreground">
+                      Page {supportPage} sur {totalSupportPages} ({filteredSupports.length} résultat{filteredSupports.length > 1 ? 's' : ''})
+                    </p>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setSupportPage(p => Math.max(1, p - 1))}
+                        disabled={supportPage === 1}
+                      >
+                        <ChevronLeft size={16} />
+                        Précédent
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setSupportPage(p => Math.min(totalSupportPages, p + 1))}
+                        disabled={supportPage === totalSupportPages}
+                      >
+                        Suivant
+                        <ChevronRight size={16} />
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </TabsContent>
+
+              {/* Rewards Tab */}
+              <TabsContent value="rewards">
+                <div className="rounded-xl border border-border/50 bg-card/50 p-8 text-center">
+                  <p className="text-muted-foreground text-lg">
+                    L'API des récompenses n'est pas encore disponible
+                  </p>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </motion.div>
+          </>
+          )}
+        </div>
+      </div>
+    </Layout>
+  );
+};
+
+export default ChroniquesPage;
