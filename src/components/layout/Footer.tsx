@@ -21,7 +21,7 @@ const Footer = () => {
             <h3 className="font-heading text-lg font-bold mb-3" style={{ color: '#043A3A' }}>Navigation</h3>
             <ul className="space-y-2 text-sm">
               <li><Link to="/" className="hover:text-primary" style={{ color: '#043A3A' }}>ACCUEIL</Link></li>
-              <li><Link to="/lutteurs" className="hover:text-primary" style={{ color: '#043A3A' }}>NOS LUTTEURS</Link></li>
+              <li><Link to="/lutteurs" className="hover:text-primary" style={{ color: '#043A3A' }}>LUTTEURS</Link></li>
               <li><Link to="/pronostics" className="hover:text-primary" style={{ color: '#043A3A' }}>PRONOSTICS</Link></li>
               <li><Link to="/chroniques" className="hover:text-primary" style={{ color: '#043A3A' }}>HISTORIQUE</Link></li>
               <li><Link to="/faq" className="hover:text-primary" style={{ color: '#043A3A' }}>FAQ</Link></li>

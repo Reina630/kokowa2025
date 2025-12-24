@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import kokowaLogo from "@/assets/kokowa-logo.png";
 import kokowaLogo2 from "@/assets/kokowa-logo2.png";
+import bandeBg from "@/assets/bande.png";
 
 const navItems = [
   { label: "ACCUEIL", path: "/" },
@@ -34,10 +35,21 @@ const Header = () => {
     <>
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled ? "bg-background/95 backdrop-blur-md shadow-lg" : "bg-transparent"
+          scrolled ? "shadow-lg" : ""
         }`}
+        style={{
+          backgroundImage: `url(${bandeBg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+        }}
       >
-        <div className="container mx-auto px-4">
+        {/* Overlay pour améliorer la lisibilité */}
+        <div className={`absolute inset-0 transition-all duration-300 ${
+          scrolled ? "bg-background/95 backdrop-blur-md" : "bg-background/60"
+        }`} />
+        
+        <div className="container mx-auto px-4 relative z-10">
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
             <Link to="/" className="flex-shrink-0 flex items-center gap-4">

@@ -2,7 +2,7 @@ import { motion, useInView } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import heroBg from "@/assets/hero.png";
+import heroBg from "@/assets/hero2.png";
 import croixIcon from "@/assets/croix.png";
 import sabreIcon from "@/assets/sarbre.png";
 import Layout from "@/components/layout/Layout";
@@ -89,8 +89,8 @@ const Index = () => {
             alt="Lutteurs traditionnels"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-background/40" />
-          <div className="absolute inset-0 bg-gradient-to-r from-background/60 via-transparent to-background/60" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/50 via-background/30 to-background/10" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/30 via-transparent to-background/30" />
         </div>
 
         {/* Content */}
@@ -100,14 +100,14 @@ const Index = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="flex items-center justify-center gap-3 md:gap-6"
+            className="flex items-center justify-center gap-1.5 md:gap-3"
           >
             {/* Sabre à gauche - couvre les deux lignes */}
-            <img src={sabreIcon} alt="Sabre" className="h-20 md:h-44 lg:h-56 w-auto" />
+            <img src={sabreIcon} alt="Sabre" className="h-32 md:h-44 lg:h-56 w-auto" />
             
             {/* Titre principal */}
             <div className="text-center">
-              <h1 className="font-heading text-5xl md:text-7xl lg:text-8xl font-bold uppercase tracking-tight mb-2 flex items-center justify-center gap-3">
+              <h1 className="font-heading text-5xl md:text-7xl lg:text-8xl font-bold uppercase tracking-tight mb-2 flex items-center justify-center gap-2 md:gap-3">
                 <span className="text-foreground">KOKOWA</span>
                 <img src={croixIcon} alt="Croix du Sud" className="h-12 md:h-16 lg:h-20 w-auto" />
               </h1>

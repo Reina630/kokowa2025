@@ -94,17 +94,26 @@ const ChroniquesPage = () => {
         setLutteurs(lutteursMap);
 
         // Transformer tous les affrontements en fights
+        console.log('Affrontements reçus:', affrontementsData);
+        console.log('Lutteurs map:', lutteursMap);
+        
         const fightsList: Fight[] = affrontementsData
-          .map(aff => ({
-            id: aff.id,
-            date: new Date(aff.date).toLocaleDateString('fr-FR'),
-            fighter1: lutteursMap[aff.l1]?.nom || 'Inconnu',
-            fighter2: lutteursMap[aff.l2]?.nom || 'Inconnu',
-            winner: aff.vainqueur ? lutteursMap[aff.vainqueur]?.nom || null : null,
-            region1: lutteursMap[aff.l1]?.region || '',
-            region2: lutteursMap[aff.l2]?.region || '',
-            phase: aff.etape
-          }));
+          .map(aff => {
+            const fight = {
+              id: aff.id,
+              date: new Date(aff.date).toLocaleDateString('fr-FR'),
+              fighter1: lutteursMap[aff.l1]?.nom || `Inconnu (ID: ${aff.l1})`,
+              fighter2: lutteursMap[aff.l2]?.nom || `Inconnu (ID: ${aff.l2})`,
+              winner: aff.vainqueur ? (lutteursMap[aff.vainqueur]?.nom || `Inconnu (ID: ${aff.vainqueur})`) : null,
+              region1: lutteursMap[aff.l1]?.region || '',
+              region2: lutteursMap[aff.l2]?.region || '',
+              phase: aff.etape
+            };
+            console.log('Affrontement transformé:', aff.id, fight);
+            return fight;
+          });
+        
+        console.log('Fights finaux:', fightsList);
         setFights(fightsList);
 
         // Transformer les pronostics
@@ -134,12 +143,18 @@ const ChroniquesPage = () => {
         setPredictions(predictionsList);
 
         // Transformer les soutiens
-        const supportsList: Support[] = soutiensData.map((s, index) => ({
-          id: s.id || index,
-          date: new Date(s.cree_le).toLocaleDateString('fr-FR'),
-          fighter: lutteursMap[s.lutteur]?.nom || 'Inconnu',
-          type: s.raison
-        }));
+        console.log('Soutiens reçus:', soutiensData);
+        const supportsList: Support[] = soutiensData.map((s, index) => {
+          const support = {
+            id: s.id || index,
+            date: new Date(s.cree_le).toLocaleDateString('fr-FR'),
+            fighter: lutteursMap[s.lutteur]?.nom || `Inconnu (ID: ${s.lutteur})`,
+            type: s.raison
+          };
+          console.log('Soutien transformé:', s, support);
+          return support;
+        });
+        console.log('Soutiens finaux:', supportsList);
         setSupports(supportsList);
 
       } catch (error) {
@@ -308,7 +323,7 @@ const ChroniquesPage = () => {
                     />
                   </div>
                   <Select value={phaseFilter} onValueChange={(v) => { setPhaseFilter(v); setFightPage(1); }}>
-                    <SelectTrigger className="w-[200px] bg-card border-border/50">
+                    <SelectTrigger className="w-[180px] bg-card border-border/50">
                       <SelectValue placeholder="Filtrer par phase" />
                     </SelectTrigger>
                     <SelectContent>
@@ -319,84 +334,83 @@ const ChroniquesPage = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="rounded-xl border border-border/50 bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-sm overflow-hidden shadow-lg shadow-primary/5">
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="border-border/50 hover:bg-transparent bg-primary/5">
-                        <TableHead className="text-muted-foreground font-heading uppercase text-xs">Date</TableHead>
-                        <TableHead className="text-muted-foreground font-heading uppercase text-xs">Lutteur 1</TableHead>
-                        <TableHead className="text-muted-foreground font-heading uppercase text-xs">Lutteur 2</TableHead>
-                        <TableHead className="text-muted-foreground font-heading uppercase text-xs">Vainqueur</TableHead>
-                        <TableHead className="text-muted-foreground font-heading uppercase text-xs hidden lg:table-cell">Phase</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredFights.length === 0 ? (
-                        <TableRow>
-                          <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
-                            Aucun affrontement trouvé
-                          </TableCell>
-                        </TableRow>
-                      ) : paginatedFights.map((fight, index) => (
-                        <tr
-                          key={fight.id}
-                          className="border-border/30 hover:bg-primary/5"
-                        >
-                          <motion.td
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.05 }}
-                            className="text-sm text-muted-foreground"
-                          >
-                            <span className="flex items-center gap-1.5">
-                              <Calendar size={14} className="text-orange-500" />
-                              {fight.date}
-                            </span>
-                          </motion.td>
-                          <motion.td
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.05 }}
-                            className="font-medium text-foreground"
-                          >
-                            {fight.fighter1}
-                          </motion.td>
-                          <motion.td
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.05 }}
-                            className="font-medium text-foreground"
-                          >
-                            {fight.fighter2}
-                          </motion.td>
-                          <motion.td
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.05 }}
-                          >
-                            {fight.winner ? (
-                              <span className="flex items-center gap-1.5 text-yellow-400 font-semibold">
-                                <Star size={14} className="fill-yellow-500" />
-                                {fight.winner}
-                              </span>
-                            ) : (
-                              <span className="text-muted-foreground">-</span>
-                            )}
-                          </motion.td>
-                          <motion.td
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.05 }}
-                            className="text-muted-foreground hidden lg:table-cell"
-                          >
-                            <span className="px-2 py-1 rounded text-xs font-medium bg-primary/20 text-primary">
-                              {fight.phase}
-                            </span>
-                          </motion.td>
-                        </tr>
-                      ))}
-                    </TableBody>
-                  </Table>
+                
+                {/* Liste des combats */}
+                <div className="space-y-3">
+                  {filteredFights.length === 0 ? (
+                    <div className="text-center text-muted-foreground py-12 bg-card rounded-xl border border-border/50">
+                      Aucun affrontement trouvé
+                    </div>
+                  ) : paginatedFights.map((fight, index) => (
+                    <motion.div
+                      key={fight.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      className="bg-gradient-to-br from-card to-card/60 rounded-xl border border-border/50 p-4 hover:border-primary/30 transition-all hover:shadow-lg hover:shadow-primary/5"
+                    >
+                      {/* Desktop view */}
+                      <div className="hidden md:flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-3">
+                          <Calendar size={16} className="text-orange-500" />
+                          <span className="text-sm text-muted-foreground">{fight.date}</span>
+                        </div>
+                        
+                        <div className="flex items-center gap-4 flex-1 justify-center">
+                          <span className="font-heading font-semibold text-foreground text-lg">{fight.fighter1}</span>
+                          <Swords size={20} className="text-primary" />
+                          <span className="font-heading font-semibold text-foreground text-lg">{fight.fighter2}</span>
+                        </div>
+                        
+                        <div className="flex items-center gap-4">
+                          {fight.winner ? (
+                            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                              <Star size={16} className="fill-yellow-500 text-yellow-500" />
+                              <span className="font-semibold text-yellow-400">{fight.winner}</span>
+                            </div>
+                          ) : (
+                            <span className="text-muted-foreground text-sm">En attente</span>
+                          )}
+                          <span className="px-3 py-1 rounded-lg text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+                            {fight.phase}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      {/* Mobile view */}
+                      <div className="md:hidden space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Calendar size={14} className="text-orange-500" />
+                            <span className="text-xs text-muted-foreground">{fight.date}</span>
+                          </div>
+                          <span className="px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary">
+                            {fight.phase}
+                          </span>
+                        </div>
+                        
+                        <div className="flex flex-col gap-2">
+                          <div className="flex items-center justify-between">
+                            <span className="font-heading font-semibold text-foreground">{fight.fighter1}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Swords size={16} className="text-primary" />
+                            <div className="h-px flex-1 bg-border"></div>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="font-heading font-semibold text-foreground">{fight.fighter2}</span>
+                          </div>
+                        </div>
+                        
+                        {fight.winner && (
+                          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-yellow-500/10 border border-yellow-500/20 w-fit">
+                            <Star size={14} className="fill-yellow-500 text-yellow-500" />
+                            <span className="font-semibold text-yellow-400 text-sm">Vainqueur: {fight.winner}</span>
+                          </div>
+                        )}
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
                 {filteredFights.length > 0 && totalFightPages > 1 && (
                   <div className="flex items-center justify-between mt-4">
@@ -566,7 +580,7 @@ const ChroniquesPage = () => {
                     />
                   </div>
                   <Select value={typeFilter} onValueChange={(v) => { setTypeFilter(v); setSupportPage(1); }}>
-                    <SelectTrigger className="w-[200px] bg-card border-border/50">
+                    <SelectTrigger className="w-[180px] bg-card border-border/50">
                       <SelectValue placeholder="Filtrer par type" />
                     </SelectTrigger>
                     <SelectContent>
@@ -577,62 +591,61 @@ const ChroniquesPage = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="rounded-xl border border-border/50 bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-sm overflow-hidden shadow-lg shadow-primary/5">
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="border-border/50 hover:bg-transparent bg-primary/5">
-                        <TableHead className="text-muted-foreground font-heading uppercase text-xs">Date</TableHead>
-                        <TableHead className="text-muted-foreground font-heading uppercase text-xs">Lutteur</TableHead>
-                        <TableHead className="text-muted-foreground font-heading uppercase text-xs">Type</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredSupports.length === 0 ? (
-                        <TableRow>
-                          <TableCell colSpan={3} className="text-center text-muted-foreground py-8">
-                            Aucun soutien trouvé
-                          </TableCell>
-                        </TableRow>
-                      ) : paginatedSupports.map((support, index) => (
-                        <tr
-                          key={support.id}
-                          className="border-border/30 hover:bg-primary/5"
-                        >
-                          <motion.td
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.05 }}
-                            className="text-sm text-muted-foreground"
-                          >
-                            <span className="flex items-center gap-1.5">
-                              <Calendar size={14} className="text-green-500" />
-                              {support.date}
-                            </span>
-                          </motion.td>
-                          <motion.td
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.05 }}
-                          >
-                            <span className="flex items-center gap-1.5 text-foreground">
-                              <User size={14} className="text-blue-500" />
-                              {support.fighter}
-                            </span>
-                          </motion.td>
-                          <motion.td
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.05 }}
-                          >
-                            <span className="flex items-center gap-1.5 text-red-400">
-                              <Heart size={14} className="fill-red-500 text-red-500" />
-                              {support.type}
-                            </span>
-                          </motion.td>
-                        </tr>
-                      ))}
-                    </TableBody>
-                  </Table>
+                
+                {/* Liste des soutiens */}
+                <div className="space-y-3">
+                  {filteredSupports.length === 0 ? (
+                    <div className="text-center text-muted-foreground py-12 bg-card rounded-xl border border-border/50">
+                      Aucun soutien trouvé
+                    </div>
+                  ) : paginatedSupports.map((support, index) => (
+                    <motion.div
+                      key={support.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      className="bg-gradient-to-br from-card to-card/60 rounded-xl border border-border/50 p-4 hover:border-red-500/30 transition-all hover:shadow-lg hover:shadow-red-500/5"
+                    >
+                      {/* Desktop view */}
+                      <div className="hidden md:flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-3">
+                          <Calendar size={16} className="text-green-500" />
+                          <span className="text-sm text-muted-foreground">{support.date}</span>
+                        </div>
+                        
+                        <div className="flex items-center gap-3 flex-1">
+                          <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                            <User size={16} className="text-blue-500" />
+                            <span className="font-heading font-semibold text-foreground text-lg">{support.fighter}</span>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500/10 border border-red-500/20">
+                          <Heart size={16} className="fill-red-500 text-red-500" />
+                          <span className="font-medium text-red-400">{support.type}</span>
+                        </div>
+                      </div>
+                      
+                      {/* Mobile view */}
+                      <div className="md:hidden space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Calendar size={14} className="text-green-500" />
+                            <span className="text-xs text-muted-foreground">{support.date}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-red-500/10 border border-red-500/20">
+                            <Heart size={12} className="fill-red-500 text-red-500" />
+                            <span className="font-medium text-red-400 text-xs">{support.type}</span>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                          <User size={16} className="text-blue-500" />
+                          <span className="font-heading font-semibold text-foreground">{support.fighter}</span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
                 {filteredSupports.length > 0 && totalSupportPages > 1 && (
                   <div className="flex items-center justify-between mt-4">
@@ -667,7 +680,7 @@ const ChroniquesPage = () => {
               <TabsContent value="rewards">
                 <div className="rounded-xl border border-border/50 bg-card/50 p-8 text-center">
                   <p className="text-muted-foreground text-lg">
-                    L'API des récompenses n'est pas encore disponible
+                    En attente ...
                   </p>
                 </div>
               </TabsContent>
