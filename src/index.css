@@ -9,7 +9,7 @@
 @layer base {
   :root {
     /* Core Colors - Dark Theme */
-    --background: 15 10% 5%;
+    --background: 150 15% 7%;
     --foreground: 0 0% 98%;
     
     /* Card surfaces */

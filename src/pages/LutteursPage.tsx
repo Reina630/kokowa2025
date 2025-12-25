@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Heart, Gift, X, Users, Award, Search, MapPin, User, ChevronLeft, ChevronRight } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import lutteursService, { Lutteur } from "@/services/lutteursService";
+import { Button } from "@/components/ui/button";
 import {
   Carousel,
   CarouselContent,
@@ -67,70 +68,61 @@ const FighterCard = ({ fighter, onSupportSuccess }: { fighter: Fighter; onSuppor
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="fighter-card"
+        className="fighter-card mx-auto w-full bg-white rounded-2xl shadow-md overflow-hidden"
       >
         {/* Fighter Placeholder */}
-        <div className="relative aspect-video overflow-hidden flex items-center justify-center bg-muted">
-          <div className="w-24 h-24 rounded-full bg-secondary flex items-center justify-center">
-            <User size={48} className="text-muted-foreground" />
+        <div className="relative flex items-center justify-center bg-gray-100 h-56 sm:h-64">
+          <div className="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center">
+            <User size={40} className="text-gray-400" />
           </div>
           
           {/* Status Badge */}
-          <div className="absolute top-4 right-4">
+          <div className="absolute top-3 right-3">
             <span
-              className={`px-3 py-1 rounded-full text-xs font-heading uppercase tracking-wider ${
-                fighter.status === "active" ? "badge-active" : "badge-eliminated"
+              className={`px-3 py-1 rounded-full text-[10px] font-heading uppercase tracking-wide font-semibold ${
+                fighter.status === "active" ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"
               }`}
             >
-              {fighter.status === "active" ? "En lice" : "Éliminé"}
+              {fighter.status === "active" ? "EN LICE" : "ÉLIMINÉ"}
             </span>
           </div>
         </div>
 
         {/* Fighter Info */}
-        <div className="p-5">
-          <h3 className="font-heading text-xl font-bold uppercase text-foreground mb-1">
+        <div className="px-4 py-3 bg-white">
+          <h3 className="font-heading text-lg font-bold uppercase text-gray-900 mb-2 tracking-tight">
             {fighter.name}
           </h3>
-          <p className="text-muted-foreground text-sm mb-4 flex items-center gap-1">
-            <MapPin size={14} />
-            {fighter.region}
-          </p>
-
-          {/* Stats */}
-          <div className="grid grid-cols-2 gap-4 mb-5">
-            <div className="flex items-center gap-2 text-sm">
-              <Users size={16} className="text-primary" />
-              <span className="text-foreground">
-                <AnimatedCounter value={fighter.supports} /> soutiens
-              </span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <Award size={16} className="text-gold" />
-              <span className="text-foreground">
-                <AnimatedCounter value={fighter.rewards} suffix=" F" />
-              </span>
-            </div>
+          <div className="flex items-center justify-between gap-3 mb-2">
+            <p className="text-orange-500 text-sm flex items-center gap-1 font-normal truncate">
+              <MapPin size={16} />
+              {fighter.region}
+            </p>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={() => setShowSupportModal(true)}
-              className="w-full flex items-center justify-center gap-2 bg-secondary hover:bg-secondary/80 text-secondary-foreground font-heading text-sm uppercase tracking-wider py-3 rounded-lg transition-colors touch-target"
+              className="w-full px-3 py-2 flex items-center justify-center gap-1.5 bg-orange-500 hover:bg-orange-600 text-white font-heading text-[10px] font-bold uppercase tracking-tight rounded shadow-sm transition-all"
             >
-              <Heart size={18} />
+              <Heart size={14} />
               J'aime mon lutteur
             </motion.button>
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={() => setShowRewardModal(true)}
-              className="w-full flex items-center justify-center gap-2 btn-hero-primary py-3 text-sm"
+              className="w-full px-3 py-2 flex items-center justify-center gap-1.5 border-2 border-orange-500 text-orange-500 bg-white hover:bg-orange-50 font-heading text-[10px] font-bold uppercase tracking-wide rounded shadow-sm transition-all"
             >
-              <Gift size={18} />
               Gratifier
             </motion.button>
+          </div>
+
+          <div className="flex items-center gap-1.5 text-sm mt-2">
+            <Heart size={16} className={fighter.supports > 0 ? "text-orange-500 fill-orange-500" : "text-gray-400"} />
+            <span className="text-gray-900 font-normal">
+              <AnimatedCounter value={fighter.supports} /> soutiens
+            </span>
           </div>
         </div>
       </motion.div>
@@ -138,7 +130,7 @@ const FighterCard = ({ fighter, onSupportSuccess }: { fighter: Fighter; onSuppor
       {/* Support Modal */}
       <AnimatePresence>
         {showSupportModal && (
-          <Modal onClose={() => setShowSupportModal(false)} title="J'aime mon lutteur">
+          <Modal onClose={() => setShowSupportModal(false)} title="J'aime mon lutteur" isInCarousel={true}>
             <div className="space-y-6">
               <p className="text-muted-foreground">
                 Pourquoi aimez-vous <strong className="text-foreground">{fighter.name}</strong> ?
@@ -361,7 +353,7 @@ const FighterCard = ({ fighter, onSupportSuccess }: { fighter: Fighter; onSuppor
       {/* Reward Modal */}
       <AnimatePresence>
         {showRewardModal && (
-          <Modal onClose={() => setShowRewardModal(false)} title="Récompenser le lutteur">
+          <Modal onClose={() => setShowRewardModal(false)} title="Récompenser le lutteur" isInCarousel={true}>
             <div className="space-y-4">
               <p className="text-muted-foreground">
                 Envoyez une récompense à <strong className="text-foreground">{fighter.name}</strong>
@@ -400,14 +392,14 @@ const FighterCard = ({ fighter, onSupportSuccess }: { fighter: Fighter; onSuppor
   );
 };
 
-const Modal = ({ children, onClose, title }: { children: React.ReactNode; onClose: () => void; title: string }) => {
+const Modal = ({ children, onClose, title, isInCarousel = false }: { children: React.ReactNode; onClose: () => void; title: string; isInCarousel?: boolean }) => {
   return (
     <>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        className={`fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4 ${isInCarousel ? 'z-[100]' : 'z-50'}`}
         onClick={onClose}
       >
         <motion.div
@@ -436,6 +428,9 @@ const LutteursPage = () => {
   const [fighters, setFighters] = useState<Fighter[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activePage, setActivePage] = useState(1);
+  const [regionPage, setRegionPage] = useState(1);
+  const itemsPerPage = 3;
 
   // Fonction pour mapper les données de l'API vers le format du frontend
   const mapLutteurToFighter = (lutteur: Lutteur): Fighter => ({
@@ -493,12 +488,11 @@ const LutteursPage = () => {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-10"
           >
-            <p className="text-primary font-heading text-sm uppercase tracking-widest mb-2">46ème Édition</p>
-            <h1 className="font-heading text-4xl md:text-5xl font-bold uppercase text-foreground mb-4">
-               Lutteurs par Région
+            <h1 className="font-heading text-4xl md:text-5xl font-bold uppercase mb-4">
+              LUTTEURS PAR <span className="bg-gradient-to-r from-primary via-orange-500 to-orange-500 bg-clip-text text-transparent">RÉGIONS</span>
             </h1>
-            <p className="text-muted-foreground text-base max-w-2xl mx-auto">
-              Découvrez les champions qui s'affrontent pour le Sabre National 2025. Soutenez vos favoris et récompensez leur courage.
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              Découvrez les champions de chaque région et suivez leurs parcours
             </p>
           </motion.div>
 
@@ -520,56 +514,53 @@ const LutteursPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="mb-10"
+            className="mb-6 max-w-4xl mx-auto"
           >
-            <div className="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center">
+            <div className="flex flex-col sm:flex-row gap-2 items-stretch mb-3 justify-center">
               {/* Search Bar */}
-              <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
+              <div className="relative w-full sm:w-80">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
                 <input
                   type="text"
                   placeholder="Rechercher un lutteur..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 bg-secondary border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                  className="w-full pl-10 pr-3 py-1.5 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-sm"
                 />
               </div>
 
-              {/* Region Filters */}
-              <div className="flex flex-col gap-2 flex-1">
-                {/* First row - 4 regions */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {regionsTopRow.map((region) => (
-                    <button
-                      key={region}
-                      onClick={() => setSelectedRegion(selectedRegion === region ? null : region)}
-                      className={`px-4 py-2 rounded-lg font-medium text-sm transition-all ${
-                        selectedRegion === region
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-secondary text-foreground hover:bg-secondary/80"
-                      }`}
-                    >
-                      {region}
-                    </button>
-                  ))}
-                </div>
-                {/* Second row - 4 regions */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {regionsBottomRow.map((region) => (
-                    <button
-                      key={region}
-                      onClick={() => setSelectedRegion(selectedRegion === region ? null : region)}
-                      className={`px-4 py-2 rounded-lg font-medium text-sm transition-all ${
-                        selectedRegion === region
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-secondary text-foreground hover:bg-secondary/80"
-                      }`}
-                    >
-                      {region}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              {/* Region Dropdown */}
+              <select
+                value={selectedRegion || ""}
+                onChange={(e) => setSelectedRegion(e.target.value || null)}
+                className="px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all w-full sm:w-64 text-sm"
+              >
+                <option value="" className="text-gray-500">Rechercher par région</option>
+                {regions.map((region) => (
+                  <option key={region} value={region} className="text-gray-900">{region}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Region Buttons */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 max-w-3xl mx-auto">
+              {regions.map((region) => {
+                const regionCount = fighters.filter(f => f.region === region).length;
+                return (
+                  <button
+                    key={region}
+                    onClick={() => setSelectedRegion(selectedRegion === region ? null : region)}
+                    className={`px-2 py-1.5 rounded-lg font-heading transition-all border-2 ${
+                      selectedRegion === region
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-white text-gray-900 border-gray-200 hover:border-primary/50"
+                    }`}
+                  >
+                    <div className="font-bold text-[10px] uppercase">{region}</div>
+                    <div className={`text-[10px] font-normal ${selectedRegion === region ? 'text-primary-foreground' : 'text-orange-500'}`}>{regionCount} lutteurs</div>
+                  </button>
+                );
+              })}
             </div>
           </motion.div>
 
@@ -580,38 +571,49 @@ const LutteursPage = () => {
             transition={{ delay: 0.2 }}
             className="mb-12"
           >
-            <h2 className="font-heading text-2xl md:text-3xl font-bold text-foreground mb-6 uppercase">
-              Lutteurs en Lice
+            <h2 className="font-heading text-2xl md:text-3xl font-bold text-foreground mb-6 uppercase text-center">
+              Champions en Vedette
             </h2>
-            <Carousel
-              opts={{
-                align: "start",
-                loop: true,
-              }}
-              className="w-full"
-            >
-              <CarouselContent className="-ml-6">
-                {activeFighters.map((fighter) => (
-                  <CarouselItem key={fighter.id} className="pl-6 basis-full sm:basis-1/2 lg:basis-1/4">
-                    <AnimatePresence mode="popLayout">
-                      <FighterCard 
-                        fighter={fighter} 
-                        onSupportSuccess={(fighterId) => {
-                          setFighters(prev => prev.map(f => 
-                            f.id === fighterId ? { ...f, supports: f.supports + 1 } : f
-                          ));
-                        }}
-                      />
-                    </AnimatePresence>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+              {activeFighters.slice((activePage - 1) * itemsPerPage, activePage * itemsPerPage).map((fighter) => (
+                <AnimatePresence mode="popLayout" key={fighter.id}>
+                  <FighterCard 
+                    fighter={fighter} 
+                    onSupportSuccess={(fighterId) => {
+                      setFighters(prev => prev.map(f => 
+                        f.id === fighterId ? { ...f, supports: f.supports + 1 } : f
+                      ));
+                    }}
+                  />
+                </AnimatePresence>
+              ))}
+            </div>
+            
+            {activeFighters.length > itemsPerPage && (
               <div className="flex items-center justify-center gap-4 mt-8">
-                <CarouselPrevious className="static translate-y-0" />
-                <CarouselNext className="static translate-y-0" />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setActivePage(p => Math.max(1, p - 1))}
+                  disabled={activePage === 1}
+                >
+                  <ChevronLeft size={16} />
+                  Précédent
+                </Button>
+                <span className="text-sm text-muted-foreground">
+                  Page {activePage} sur {Math.ceil(activeFighters.length / itemsPerPage)}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setActivePage(p => Math.min(Math.ceil(activeFighters.length / itemsPerPage), p + 1))}
+                  disabled={activePage === Math.ceil(activeFighters.length / itemsPerPage)}
+                >
+                  Suivant
+                  <ChevronRight size={16} />
+                </Button>
               </div>
-            </Carousel>
+            )}
 
             {activeFighters.length === 0 && (
               <motion.div
@@ -632,38 +634,49 @@ const LutteursPage = () => {
               transition={{ delay: 0.3 }}
               className="mb-12"
             >
-              <h2 className="font-heading text-2xl md:text-3xl font-bold text-foreground mb-6 uppercase">
+              <h2 className="font-heading text-2xl md:text-3xl font-bold text-foreground mb-8 uppercase text-center">
                 Lutteurs de {selectedRegion}
               </h2>
-              <Carousel
-                opts={{
-                  align: "start",
-                  loop: true,
-                }}
-                className="w-full"
-              >
-                <CarouselContent className="-ml-6">
-                  {regionFilteredFighters.map((fighter) => (
-                    <CarouselItem key={fighter.id} className="pl-6 basis-full sm:basis-1/2 lg:basis-1/4">
-                      <AnimatePresence mode="popLayout">
-                        <FighterCard 
-                          fighter={fighter} 
-                          onSupportSuccess={(fighterId) => {
-                            setFighters(prev => prev.map(f => 
-                              f.id === fighterId ? { ...f, supports: f.supports + 1 } : f
-                            ));
-                          }}
-                        />
-                      </AnimatePresence>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                {regionFilteredFighters.slice((regionPage - 1) * itemsPerPage, regionPage * itemsPerPage).map((fighter) => (
+                  <AnimatePresence mode="popLayout" key={fighter.id}>
+                    <FighterCard 
+                      fighter={fighter} 
+                      onSupportSuccess={(fighterId) => {
+                        setFighters(prev => prev.map(f => 
+                          f.id === fighterId ? { ...f, supports: f.supports + 1 } : f
+                        ));
+                      }}
+                    />
+                  </AnimatePresence>
+                ))}
+              </div>
+              
+              {regionFilteredFighters.length > itemsPerPage && (
                 <div className="flex items-center justify-center gap-4 mt-8">
-                  <CarouselPrevious className="static translate-y-0" />
-                  <CarouselNext className="static translate-y-0" />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setRegionPage(p => Math.max(1, p - 1))}
+                    disabled={regionPage === 1}
+                  >
+                    <ChevronLeft size={16} />
+                    Précédent
+                  </Button>
+                  <span className="text-sm text-muted-foreground">
+                    Page {regionPage} sur {Math.ceil(regionFilteredFighters.length / itemsPerPage)}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setRegionPage(p => Math.min(Math.ceil(regionFilteredFighters.length / itemsPerPage), p + 1))}
+                    disabled={regionPage === Math.ceil(regionFilteredFighters.length / itemsPerPage)}
+                  >
+                    Suivant
+                    <ChevronRight size={16} />
+                  </Button>
                 </div>
-              </Carousel>
+              )}
 
               {regionFilteredFighters.length === 0 && (
                 <motion.div

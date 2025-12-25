@@ -1,0 +1,47 @@
+/* Style pour rendre le texte des pays visible dans le dropdown */
+.flag-select .country-label,
+.flag-select li,
+.flag-select button {
+  color: #ffffff !important;
+}
+
+.flag-select input {
+  color: #ffffff !important;
+}
+
+.flag-select .country-flag {
+  margin-right: 8px;
+}
+
+/* Style pour le dropdown ouvert */
+.flag-select ul {
+  background-color: #1a1a1a !important;
+  color: #ffffff !important;
+  border: 1px solid hsl(var(--border)) !important;
+}
+
+/* Style pour les options au survol */
+.flag-select li:hover {
+  background-color: #2a2a2a !important;
+  color: #ffffff !important;
+}
+
+/* Style pour l'input de recherche */
+.flag-select input[type="text"] {
+  background-color: #1a1a1a !important;
+  color: #ffffff !important;
+  border: 1px solid hsl(var(--border)) !important;
+}
+
+/* Style pour le bouton principal */
+.flag-select button {
+  background-color: hsl(var(--background)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  color: #ffffff !important;
+  padding: 8px 16px !important;
+  border-radius: 4px !important;
+}
+
+.flag-select button:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}

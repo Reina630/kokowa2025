@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Trophy, Target, Heart, Gift, Calendar, User, MapPin, Search, Filter, ChevronLeft, ChevronRight, Swords, Star } from "lucide-react";
+import { Trophy, Target, Heart, Gift, Calendar, User, MapPin, Search, Filter, ChevronLeft, ChevronRight, Swords, Star, Crown } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie } from "recharts";
 import Layout from "@/components/layout/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -276,6 +277,13 @@ const ChroniquesPage = () => {
           >
             <Tabs defaultValue="fights" className="w-full" onValueChange={() => { setSearchTerm(""); setFightPage(1); setPredictionPage(1); setSupportPage(1); }}>
               <TabsList className="w-full flex flex-wrap justify-center gap-2 bg-transparent h-auto mb-8">
+                {/* <TabsTrigger
+                  value="classement"
+                  className="flex items-center gap-2 px-4 py-3 data-[state=active]:bg-gradient-to-r data-[state=active]:from-yellow-400 data-[state=active]:to-orange-400 data-[state=active]:text-yellow-900 rounded-lg border border-border/50 data-[state=active]:border-yellow-400 data-[state=active]:shadow-lg data-[state=active]:shadow-yellow-400/20"
+                >
+                  <Trophy size={18} className="text-yellow-400" />
+                  <span>Classement</span>
+                </TabsTrigger> */}
                 <TabsTrigger
                   value="fights"
                   className="flex items-center gap-2 px-4 py-3 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground rounded-lg border border-border/50 data-[state=active]:border-primary data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20"
@@ -309,6 +317,108 @@ const ChroniquesPage = () => {
                   <span className="ml-1 px-2 py-0.5 text-xs rounded-full bg-purple-500/20 text-purple-400 font-semibold">0</span>
                 </TabsTrigger>
               </TabsList>
+              {/* Classement Tab */}
+              <TabsContent value="classement">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                  {/* Top Pronostiqueurs - Bar Chart */}
+                  <div className="bg-card rounded-xl border border-yellow-400/30 p-6 shadow-md flex flex-col">
+                    <h3 className="font-heading text-lg font-bold text-yellow-500 mb-4 flex items-center gap-2"><Trophy className="text-yellow-400" size={20}/>Top Pronostiqueurs</h3>
+                    <ResponsiveContainer width="100%" height={260}>
+                      <BarChart
+                        data={Array.from({length: 10}).map((_, i) => ({
+                          name: `***${1000+i*111}`,
+                          points: 100 - i*7 + Math.floor(Math.random()*5)
+                        }))}
+                        layout="vertical"
+                        margin={{left: 20, right: 20, top: 10, bottom: 10}}
+                      >
+                        <XAxis type="number" hide domain={[0, 'dataMax+10']} />
+                        <YAxis type="category" dataKey="name" width={60} tick={{fontSize: 12}} />
+                        <Tooltip formatter={(value) => `${value} pts`} />
+                        <Bar
+                          dataKey="points"
+                          radius={[8,8,8,8]}
+                          fill="#FACC15"
+                          label={({x, y, width, height, index, value, payload}) => (
+                            <g>
+                              {/* Numéro de téléphone à l'intérieur de la barre */}
+                              <text
+                                x={x + Math.max(width/2, 40)}
+                                y={y + height/2 + 2}
+                                fill="#fff"
+                                fontWeight={index === 0 ? 'bold' : 'normal'}
+                                fontSize={index === 0 ? 16 : 13}
+                                alignmentBaseline="middle"
+                                textAnchor="middle"
+                              >
+                                {index === 0 ? <tspan><Crown size={16} style={{verticalAlign:'middle'}}/> </tspan> : null}{payload && payload.name ? payload.name : ''}
+                              </text>
+                              {/* Points à droite de la barre */}
+                              <text
+                                x={x + width + 10}
+                                y={y + height/2 + 2}
+                                fill="#FACC15"
+                                fontWeight={index === 0 ? 'bold' : 'normal'}
+                                fontSize={index === 0 ? 16 : 13}
+                                alignmentBaseline="middle"
+                              >
+                                {value} pts
+                              </text>
+                            </g>
+                          )}
+                        >
+                          {Array.from({length: 10}).map((_, i) => (
+                            <Cell key={i} fill={i === 0 ? '#FFD700' : '#FACC15'} />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                  {/* Top Lutteurs gratifiés - Pie Chart */}
+                  <div className="bg-card rounded-xl border border-orange-400/30 p-6 shadow-md flex flex-col">
+                    <h3 className="font-heading text-lg font-bold text-orange-500 mb-4 flex items-center gap-2"><Gift className="text-orange-400" size={20}/>Lutteurs les plus gratifiés</h3>
+                    <ResponsiveContainer width="100%" height={220}>
+                      <PieChart>
+                        <Pie
+                          data={Array.from({length: 5}).map((_, i) => ({
+                            name: `Lutteur ${i+1}`,
+                            value: Math.floor(Math.random()*100+20)
+                          }))}
+                          dataKey="value"
+                          nameKey="name"
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={70}
+                          label={({name, percent}) => `${name} (${Math.round(percent*100)}%)`}
+                        >
+                          {['#FDBA74','#F59E42','#F97316','#EA580C','#C2410C'].map((color, i) => (
+                            <Cell key={i} fill={color} />
+                          ))}
+                        </Pie>
+                        <Tooltip formatter={(value) => `${value} gratifications`} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                  {/* Lutteurs spéciaux - Badges stylisés */}
+                  <div className="bg-card rounded-xl border border-primary/30 p-6 shadow-md flex flex-col">
+                    <h3 className="font-heading text-lg font-bold text-primary mb-4 flex items-center gap-2"><Star className="text-primary" size={20}/>Lutteurs spéciaux</h3>
+                    <div className="flex flex-col gap-4 mt-2">
+                      <div className="flex items-center gap-3">
+                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-green-100 text-green-700 font-semibold text-xs shadow"><Star size={14} className="text-green-500"/> Fairplay</span>
+                        <span className="font-heading text-foreground">Lutteur Fairplay</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-blue-100 text-blue-700 font-semibold text-xs shadow"><Star size={14} className="text-blue-500"/> Performant</span>
+                        <span className="font-heading text-foreground">Lutteur Performant</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 font-semibold text-xs shadow"><Star size={14} className="text-yellow-500"/> Charismatique</span>
+                        <span className="font-heading text-foreground">Lutteur Charismatique</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </TabsContent>
 
               {/* Fights Tab */}
               <TabsContent value="fights">

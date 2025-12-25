@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import RejoindreForm from "@/components/RejoindreForm";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import kokowaLogo from "@/assets/kokowa-logo.png";
@@ -34,9 +36,7 @@ const Header = () => {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled ? "shadow-lg" : ""
-        }`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 min-h-[4.5rem] md:min-h-[5.5rem] flex flex-col justify-center` + (scrolled ? " shadow-lg" : "")}
         style={{
           backgroundImage: `url(${bandeBg})`,
           backgroundSize: 'cover',
@@ -48,9 +48,9 @@ const Header = () => {
         <div className={`absolute inset-0 transition-all duration-300 ${
           scrolled ? "bg-background/95 backdrop-blur-md" : "bg-background/60"
         }`} />
-        
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="flex items-center justify-between h-16 md:h-20">
+        <div className="w-full relative z-10">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
             <Link to="/" className="flex-shrink-0 flex items-center gap-4">
               <img
@@ -58,11 +58,11 @@ const Header = () => {
                 alt="Kokowa Sabre National Tahoua 2025"
                 className="h-12 md:h-16 w-auto"
               />
-              <img
+              {/* <img
                 src={kokowaLogo2}
                 alt="Kokowa Logo 2"
                 className="h-12 md:h-16 w-auto"
-              />
+              /> */}
             </Link>
 
             {/* Desktop Navigation */}
@@ -80,6 +80,21 @@ const Header = () => {
                   {item.label}
                 </Link>
               ))}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button
+                    className="ml-4 bg-orange-500 hover:bg-orange-600 text-white font-heading font-bold uppercase tracking-tight rounded px-4 py-2 shadow transition-all"
+                  >
+                    Rejoindre
+                  </button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Rejoindre Kokowa</DialogTitle>
+                  </DialogHeader>
+                  <RejoindreForm />
+                </DialogContent>
+              </Dialog>
             </nav>
 
             {/* Mobile Menu Button */}
@@ -91,6 +106,7 @@ const Header = () => {
               {isOpen ? <X size={28} /> : <Menu size={28} />}
             </button>
           </div>
+        </div>
         </div>
       </header>
 
@@ -145,6 +161,16 @@ const Header = () => {
                       </Link>
                     </motion.div>
                   ))}
+                </div>
+
+                {/* Rejoindre button in mobile menu */}
+                <div className="p-4 border-t border-border">
+                  <Link
+                    to="/rejoindre"
+                    className="block text-center bg-orange-500 hover:bg-orange-600 text-white font-heading font-bold uppercase tracking-tight rounded px-4 py-3 shadow transition-all"
+                  >
+                    Rejoindre
+                  </Link>
                 </div>
               </div>
             </motion.nav>

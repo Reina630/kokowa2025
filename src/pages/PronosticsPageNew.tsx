@@ -238,44 +238,59 @@ const PronosticsPageNew = () => {
   return (
     <Layout>
       <div className="pt-24 pb-16 min-h-screen">
-        <div className="container mx-auto px-4 max-w-4xl">
-          {/* Header */}
+        {/* Header - Outside white box */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-6"
+        >
+          <h1 className="font-heading text-4xl md:text-5xl font-extrabold uppercase text-white mb-2">
+            PRONOSTICS
+          </h1>
+          <p className="text-gray-300 text-lg">
+            Pronostiquez sur les matchs en direct et à venir !
+          </p>
+        </motion.div>
+
+        {/* Tabs - Outside white box */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="flex justify-center mb-6"
+        >
+          <div className="bg-gray-800 rounded-xl p-1 border border-gray-700">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
+                  activeTab === tab.id
+                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    : 'text-gray-300 hover:text-white'
+                }`}
+              >
+                {tab.label}
+                <span className="ml-2 text-sm opacity-70">({tab.count})</span>
+              </button>
+            ))}
+          </div>
+        </motion.div>
+
+        <div className="w-full flex justify-center">
+          <div className="bg-white shadow-2xl border border-gray-200 p-4 md:p-10 w-full max-w-6xl">
+          {/* Tab Title - Inside white box */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-8"
           >
-            <h1 className="font-heading text-4xl md:text-5xl font-bold uppercase text-foreground mb-4">
-               Pronostics
-            </h1>
-            <p className="text-muted-foreground text-lg">
-              Pronostiquez sur les matchs en direct et à venir !
-            </p>
-          </motion.div>
-
-          {/* Tabs */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="flex justify-center mb-8"
-          >
-            <div className="bg-card rounded-xl p-1 border border-border">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
-                    activeTab === tab.id
-                      ? 'bg-primary text-primary-foreground shadow-sm'
-                      : 'text-muted-foreground hover:text-foreground'
-                  }`}
-                >
-                  {tab.label}
-                  <span className="ml-2 text-sm opacity-70">({tab.count})</span>
-                </button>
-              ))}
-            </div>
+            <h2 className="font-heading text-3xl md:text-4xl font-extrabold uppercase text-gray-900">
+              {activeTab === 'quarts' && 'QUARTS DE FINALE'}
+              {activeTab === 'demi' && 'DEMI-FINALES'}
+              {activeTab === '3eme' && 'MATCH POUR LA 3ÈME PLACE'}
+              {activeTab === 'finale' && 'GRANDE FINALE'}
+            </h2>
           </motion.div>
 
           {/* Error Message */}
@@ -334,23 +349,23 @@ const PronosticsPageNew = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="bg-card rounded-xl p-4 border border-border shadow-md"
+                    className="bg-gradient-to-br from-gray-100 via-gray-50 to-gray-100 border border-orange-500/30 rounded-2xl shadow-xl shadow-orange-500/10 p-4 transition-all hover:scale-[1.02] hover:shadow-orange-400/20"
                   >
                     {/* Status Badge */}
                     <div className="flex justify-between items-center mb-3">
                       <span className="text-xs text-muted-foreground">{match.date}</span>
                       {match.status === 'finished' && (
-                        <span className="px-2 py-1 bg-red-500/20 text-red-600 rounded-full text-xs font-medium">
+                        <span className="px-2 py-1 bg-white text-red-600 border border-red-200 rounded-full text-xs font-semibold">
                           Terminé
                         </span>
                       )}
                       {match.status === 'live' && (
-                        <span className="px-2 py-1 bg-green-500/20 text-green-600 rounded-full text-xs font-medium">
+                        <span className="px-2 py-1 bg-white text-green-600 border border-green-200 rounded-full text-xs font-semibold">
                           En Direct
                         </span>
                       )}
                       {match.status === 'upcoming' && (
-                        <span className="px-2 py-1 rounded-full text-xs font-medium text-white" style={{ backgroundColor: '#043A3A' }}>
+                        <span className="px-2 py-1 bg-white text-primary border border-primary/20 rounded-full text-xs font-semibold">
                           À venir
                         </span>
                       )}
@@ -366,16 +381,16 @@ const PronosticsPageNew = () => {
                         onClick={() => canVote && handleVote(match.id, match.fighter1.id)}
                       >
                         <div className="text-center space-y-1">
-                          <p className="font-heading font-bold text-xs truncate">{match.fighter1.name}</p>
-                          <p className="text-[10px] text-muted-foreground truncate">{match.fighter1.region}</p>
+                          <p className="font-heading font-bold text-xs text-orange-500 truncate">{match.fighter1.name}</p>
+                          <p className="text-[10px] text-gray-600 truncate">{match.fighter1.region}</p>
                           <div className="flex items-center justify-center gap-1">
-                            <span className="font-bold text-primary text-sm">{votes1}</span>
+                            <span className="font-bold text-gray-900 text-sm">{votes1}</span>
                             {isFinished && match.winner === match.fighter1.id && (
-                              <Trophy size={12} className="text-green-600" />
+                              <Trophy size={12} className="text-green-400" />
                             )}
                           </div>
-                          <div className="w-full bg-secondary rounded-full h-1">
-                            <div className="bg-primary h-1 rounded-full" style={{ width: `${percentage1}%` }} />
+                          <div className="w-full bg-gray-300 rounded-full h-2 mt-1">
+                            <div className="bg-orange-500 h-2 rounded-full transition-all" style={{ width: `${percentage1}%` }} />
                           </div>
                         </div>
                       </div>
@@ -394,16 +409,16 @@ const PronosticsPageNew = () => {
                         onClick={() => canVote && handleVote(match.id, match.fighter2.id)}
                       >
                         <div className="text-center space-y-1">
-                          <p className="font-heading font-bold text-xs truncate">{match.fighter2.name}</p>
-                          <p className="text-[10px] text-muted-foreground truncate">{match.fighter2.region}</p>
+                          <p className="font-heading font-bold text-xs text-orange-500 truncate">{match.fighter2.name}</p>
+                          <p className="text-[10px] text-gray-600 truncate">{match.fighter2.region}</p>
                           <div className="flex items-center justify-center gap-1">
-                            <span className="font-bold text-primary text-sm">{votes2}</span>
+                            <span className="font-bold text-gray-900 text-sm">{votes2}</span>
                             {isFinished && match.winner === match.fighter2.id && (
-                              <Trophy size={12} className="text-green-600" />
+                              <Trophy size={12} className="text-green-400" />
                             )}
                           </div>
-                          <div className="w-full bg-secondary rounded-full h-1">
-                            <div className="bg-primary h-1 rounded-full" style={{ width: `${percentage2}%` }} />
+                          <div className="w-full bg-gray-300 rounded-full h-2 mt-1">
+                            <div className="bg-orange-500 h-2 rounded-full transition-all" style={{ width: `${percentage2}%` }} />
                           </div>
                         </div>
                       </div>
@@ -420,7 +435,7 @@ const PronosticsPageNew = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className="bg-card rounded-xl p-6 border border-border shadow-lg"
+                    className="bg-gradient-to-br from-gray-100 via-gray-50 to-gray-100 rounded-xl p-6 border border-orange-500/30 shadow-xl shadow-orange-500/10"
                   >
                     {/* Match Info */}
                     <div className="flex justify-between items-center mb-5">
@@ -456,22 +471,22 @@ const PronosticsPageNew = () => {
                             <User size={28} className="text-primary" />
                           </div>
                           <div className="flex-1">
-                            <h3 className="font-heading text-lg font-bold">{match.fighter1.name}</h3>
-                            <p className="text-sm text-muted-foreground flex items-center gap-1">
+                            <h3 className="font-heading text-lg font-bold text-gray-900">{match.fighter1.name}</h3>
+                            <p className="text-sm text-gray-600 flex items-center gap-1">
                               <MapPin size={14} />
                               {match.fighter1.region}
                             </p>
                           </div>
                           <div className="text-right">
-                            <div className="font-bold text-2xl text-primary">{votes1}</div>
-                            <div className="text-xs text-muted-foreground">{percentage1}%</div>
+                            <div className="font-bold text-2xl text-orange-500">{votes1}</div>
+                            <div className="text-xs text-gray-600">{percentage1}%</div>
                             {isFinished && match.winner === match.fighter1.id && (
                               <Trophy size={20} className="mt-1 text-green-600" />
                             )}
                           </div>
                         </div>
-                        <div className="mt-3 w-full bg-secondary rounded-full h-2">
-                          <div className="bg-primary h-2 rounded-full transition-all" style={{ width: `${percentage1}%` }} />
+                        <div className="mt-3 w-full bg-gray-300 rounded-full h-2">
+                          <div className="bg-orange-500 h-2 rounded-full transition-all" style={{ width: `${percentage1}%` }} />
                         </div>
                       </div>
                       
@@ -491,22 +506,22 @@ const PronosticsPageNew = () => {
                             <User size={28} className="text-primary" />
                           </div>
                           <div className="flex-1">
-                            <h3 className="font-heading text-lg font-bold">{match.fighter2.name}</h3>
-                            <p className="text-sm text-muted-foreground flex items-center gap-1">
+                            <h3 className="font-heading text-lg font-bold text-gray-900">{match.fighter2.name}</h3>
+                            <p className="text-sm text-gray-600 flex items-center gap-1">
                               <MapPin size={14} />
                               {match.fighter2.region}
                             </p>
                           </div>
                           <div className="text-right">
-                            <div className="font-bold text-2xl text-primary">{votes2}</div>
-                            <div className="text-xs text-muted-foreground">{percentage2}%</div>
+                            <div className="font-bold text-2xl text-orange-500">{votes2}</div>
+                            <div className="text-xs text-gray-600">{percentage2}%</div>
                             {isFinished && match.winner === match.fighter2.id && (
                               <Trophy size={20} className="mt-1 text-green-600" />
                             )}
                           </div>
                         </div>
-                        <div className="mt-3 w-full bg-secondary rounded-full h-2">
-                          <div className="bg-primary h-2 rounded-full transition-all" style={{ width: `${percentage2}%` }} />
+                        <div className="mt-3 w-full bg-gray-300 rounded-full h-2">
+                          <div className="bg-orange-500 h-2 rounded-full transition-all" style={{ width: `${percentage2}%` }} />
                         </div>
                       </div>
                     </div>
@@ -521,7 +536,7 @@ const PronosticsPageNew = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className="bg-card rounded-xl p-8 border-2 border-border shadow-lg"
+                  className="bg-gradient-to-br from-gray-100 via-gray-50 to-gray-100 rounded-xl p-8 border-2 border-orange-500/30 shadow-xl shadow-orange-500/10"
                 >
                   {/* Status Badge */}
                   <div className="flex justify-between items-center mb-6">
@@ -552,16 +567,16 @@ const PronosticsPageNew = () => {
                       }`}
                     >
                       <div className="text-center space-y-3">
-                        <p className="font-heading font-bold text-lg">{match.fighter1.name}</p>
-                        <p className="text-sm text-muted-foreground">{match.fighter1.region}</p>
+                        <p className="font-heading font-bold text-lg text-gray-900">{match.fighter1.name}</p>
+                        <p className="text-sm text-gray-600">{match.fighter1.region}</p>
                         <div className="flex items-center justify-center gap-2">
-                          <span className="font-bold text-primary text-2xl">{votes1}</span>
+                          <span className="font-bold text-orange-500 text-2xl">{votes1}</span>
                           {isFinished && match.winner === match.fighter1.id && (
                             <Trophy size={20} className="text-green-600" />
                           )}
                         </div>
-                        <div className="w-full bg-secondary rounded-full h-2">
-                          <div className="bg-primary h-2 rounded-full" style={{ width: `${percentage1}%` }} />
+                        <div className="w-full bg-gray-300 rounded-full h-2">
+                          <div className="bg-orange-500 h-2 rounded-full" style={{ width: `${percentage1}%` }} />
                         </div>
                         {canVote && (
                           <button
@@ -587,16 +602,16 @@ const PronosticsPageNew = () => {
                       }`}
                     >
                       <div className="text-center space-y-3">
-                        <p className="font-heading font-bold text-lg">{match.fighter2.name}</p>
-                        <p className="text-sm text-muted-foreground">{match.fighter2.region}</p>
+                        <p className="font-heading font-bold text-lg text-gray-900">{match.fighter2.name}</p>
+                        <p className="text-sm text-gray-600">{match.fighter2.region}</p>
                         <div className="flex items-center justify-center gap-2">
-                          <span className="font-bold text-primary text-2xl">{votes2}</span>
+                          <span className="font-bold text-orange-500 text-2xl">{votes2}</span>
                           {isFinished && match.winner === match.fighter2.id && (
                             <Trophy size={20} className="text-green-600" />
                           )}
                         </div>
-                        <div className="w-full bg-secondary rounded-full h-2">
-                          <div className="bg-primary h-2 rounded-full" style={{ width: `${percentage2}%` }} />
+                        <div className="w-full bg-gray-300 rounded-full h-2">
+                          <div className="bg-orange-500 h-2 rounded-full" style={{ width: `${percentage2}%` }} />
                         </div>
                         {canVote && (
                           <button
@@ -616,6 +631,7 @@ const PronosticsPageNew = () => {
           </div>
             </>
           )}
+          </div>
         </div>
 
         {/* Modal for phone number */}

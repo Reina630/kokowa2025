@@ -6,8 +6,10 @@ import { HashRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import LutteursPage from "./pages/LutteursPage";
 import PronosticsPageNew from "./pages/PronosticsPageNew";
+import PronosticsPage from "./pages/PronosticsPage";
 import ChroniquesPage from "./pages/ChroniquesPage";
 import FAQPage from "./pages/FAQPage";
+import RejoindrePage from "./pages/RejoindrePage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +26,7 @@ const App = () => (
           <Route path="/pronostics" element={<PronosticsPageNew />} />
           <Route path="/chroniques" element={<ChroniquesPage />} />
           <Route path="/faq" element={<FAQPage />} />
+          <Route path="/rejoindre" element={<RejoindrePage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </HashRouter>
