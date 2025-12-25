@@ -159,32 +159,22 @@ const PronosticsPage = () => {
                   {/* 3D depth effect */}
                   <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   
-                  <div className="aspect-[3/4] relative bg-muted flex items-center justify-center">
-                    <div className="w-20 h-20 rounded-full bg-secondary flex items-center justify-center">
-                      <User size={40} className="text-muted-foreground" />
+                  <div className="aspect-[4/5] relative bg-muted flex items-center justify-center">
+                    <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-secondary flex items-center justify-center">
+                      <User size={64} className="text-muted-foreground" />
                     </div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-card via-card/30 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent" />
                   </div>
                   
-                  <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
-                    <h3 className="font-heading text-lg md:text-2xl font-bold uppercase text-foreground leading-tight">
+                  <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4">
+                    <h3 className="font-heading text-base md:text-xl font-bold uppercase text-foreground leading-tight">
                       {currentFight.fighter1.name}
                     </h3>
-                    <div className="mt-2 flex items-center gap-2">
-                      <span className="px-1 py-0 text-[10px] leading-none rounded-md bg-secondary text-secondary-foreground">
+                    <div className="mt-1 flex items-center gap-1.5">
+                      <span className="px-1.5 py-0.5 text-[9px] leading-none rounded bg-secondary text-secondary-foreground">
                         {currentFight.fighter1.region}
                       </span>
-                      <span className="text-muted-foreground text-xs">•</span>
-                      <span className="text-primary font-heading text-sm">{votes1} votes</span>
-                    </div>
-                    <div className="mt-3">
-                      <button
-                        onClick={() => !hasVoted && voteFor(1)}
-                        disabled={hasVoted}
-                        className="px-3 py-1.5 text-xs rounded-md bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
-                      >
-                        Pronostiquer
-                      </button>
+                      <span className="text-primary font-heading text-xs">{votes1} votes</span>
                     </div>
                   </div>
 
@@ -213,32 +203,22 @@ const PronosticsPage = () => {
                 <div className="relative rounded-xl overflow-hidden bg-card transform transition-transform duration-300 group-hover:scale-[1.02]">
                   <div className="absolute inset-0 bg-gradient-to-bl from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   
-                  <div className="aspect-[3/4] relative bg-muted flex items-center justify-center">
-                    <div className="w-20 h-20 rounded-full bg-secondary flex items-center justify-center">
-                      <User size={40} className="text-muted-foreground" />
+                  <div className="aspect-[4/5] relative bg-muted flex items-center justify-center">
+                    <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-secondary flex items-center justify-center">
+                      <User size={64} className="text-muted-foreground" />
                     </div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-card via-card/30 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent" />
                   </div>
                   
-                  <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 text-right">
-                    <h3 className="font-heading text-lg md:text-2xl font-bold uppercase text-foreground leading-tight">
+                  <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4 text-right">
+                    <h3 className="font-heading text-base md:text-xl font-bold uppercase text-foreground leading-tight">
                       {currentFight.fighter2.name}
                     </h3>
-                    <div className="mt-2 flex items-center justify-end gap-2">
-                      <span className="px-1 py-0 text-[10px] leading-none rounded-md bg-secondary text-secondary-foreground">
+                    <div className="mt-1 flex items-center justify-end gap-1.5">
+                      <span className="px-1.5 py-0.5 text-[9px] leading-none rounded bg-secondary text-secondary-foreground">
                         {currentFight.fighter2.region}
                       </span>
-                      <span className="text-muted-foreground text-xs">•</span>
-                      <span className="text-primary font-heading text-sm">{votes2} votes</span>
-                    </div>
-                    <div className="mt-3 flex justify-end">
-                      <button
-                        onClick={() => !hasVoted && voteFor(2)}
-                        disabled={hasVoted}
-                        className="px-3 py-1.5 text-xs rounded-md bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
-                      >
-                        Pronostiquer
-                      </button>
+                      <span className="text-primary font-heading text-xs">{votes2} votes</span>
                     </div>
                   </div>
 

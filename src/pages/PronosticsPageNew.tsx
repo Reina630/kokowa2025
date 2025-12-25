@@ -278,7 +278,7 @@ const PronosticsPageNew = () => {
         </motion.div>
 
         <div className="w-full flex justify-center">
-          <div className="bg-white shadow-2xl border border-gray-200 p-4 md:p-10 w-full max-w-6xl">
+          <div className="bg-white shadow-2xl border border-gray-200 p-4 md:p-10 w-full max-w-[95%] xl:max-w-7xl">
           {/* Tab Title - Inside white box */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -375,22 +375,26 @@ const PronosticsPageNew = () => {
                     <div className="flex items-center gap-3">
                       {/* Fighter 1 */}
                       <div 
-                        className={`flex-1 p-2 rounded-lg border-2 transition-all ${
+                        className={`flex-1 rounded-lg border-2 transition-all overflow-hidden ${
                           canVote ? 'cursor-pointer hover:border-primary/50' : ''
                         } ${isFinished && match.winner === match.fighter1.id ? 'border-green-500 bg-green-500/10' : 'border-border'}`}
                         onClick={() => canVote && handleVote(match.id, match.fighter1.id)}
                       >
-                        <div className="text-center space-y-1">
-                          <p className="font-heading font-bold text-xs text-orange-500 truncate">{match.fighter1.name}</p>
-                          <p className="text-[10px] text-gray-600 truncate">{match.fighter1.region}</p>
-                          <div className="flex items-center justify-center gap-1">
-                            <span className="font-bold text-gray-900 text-sm">{votes1}</span>
-                            {isFinished && match.winner === match.fighter1.id && (
-                              <Trophy size={12} className="text-green-400" />
-                            )}
+                        <div className="relative">
+                          {/* Photo Zone */}
+                          <div className="aspect-[3/4] bg-gray-200 flex items-center justify-center">
+                            <User size={48} className="text-gray-400" />
                           </div>
-                          <div className="w-full bg-gray-300 rounded-full h-2 mt-1">
-                            <div className="bg-orange-500 h-2 rounded-full transition-all" style={{ width: `${percentage1}%` }} />
+                          {/* Info Zone - Compact at bottom */}
+                          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
+                            <p className="font-heading font-bold text-xs text-white truncate">{match.fighter1.name}</p>
+                            <p className="text-[9px] text-gray-200 truncate">{match.fighter1.region}</p>
+                            <div className="flex items-center gap-1 mt-1">
+                              <span className="font-bold text-white text-xs">{votes1}</span>
+                              {isFinished && match.winner === match.fighter1.id && (
+                                <Trophy size={10} className="text-green-400" />
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -403,22 +407,26 @@ const PronosticsPageNew = () => {
                       
                       {/* Fighter 2 */}
                       <div 
-                        className={`flex-1 p-2 rounded-lg border-2 transition-all ${
+                        className={`flex-1 rounded-lg border-2 transition-all overflow-hidden ${
                           canVote ? 'cursor-pointer hover:border-primary/50' : ''
                         } ${isFinished && match.winner === match.fighter2.id ? 'border-green-500 bg-green-500/10' : 'border-border'}`}
                         onClick={() => canVote && handleVote(match.id, match.fighter2.id)}
                       >
-                        <div className="text-center space-y-1">
-                          <p className="font-heading font-bold text-xs text-orange-500 truncate">{match.fighter2.name}</p>
-                          <p className="text-[10px] text-gray-600 truncate">{match.fighter2.region}</p>
-                          <div className="flex items-center justify-center gap-1">
-                            <span className="font-bold text-gray-900 text-sm">{votes2}</span>
-                            {isFinished && match.winner === match.fighter2.id && (
-                              <Trophy size={12} className="text-green-400" />
-                            )}
+                        <div className="relative">
+                          {/* Photo Zone */}
+                          <div className="aspect-[3/4] bg-gray-200 flex items-center justify-center">
+                            <User size={48} className="text-gray-400" />
                           </div>
-                          <div className="w-full bg-gray-300 rounded-full h-2 mt-1">
-                            <div className="bg-orange-500 h-2 rounded-full transition-all" style={{ width: `${percentage2}%` }} />
+                          {/* Info Zone - Compact at bottom */}
+                          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
+                            <p className="font-heading font-bold text-xs text-white truncate">{match.fighter2.name}</p>
+                            <p className="text-[9px] text-gray-200 truncate">{match.fighter2.region}</p>
+                            <div className="flex items-center gap-1 mt-1">
+                              <span className="font-bold text-white text-xs">{votes2}</span>
+                              {isFinished && match.winner === match.fighter2.id && (
+                                <Trophy size={10} className="text-green-400" />
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -458,70 +466,63 @@ const PronosticsPageNew = () => {
                     </div>
 
                     {/* Fighters */}
-                    <div className="space-y-4">
+                    <div className="flex items-center gap-4">
                       {/* Fighter 1 */}
                       <div
-                        className={`p-4 rounded-lg border-2 transition-all ${
+                        className={`flex-1 rounded-lg border-2 transition-all overflow-hidden ${
                           canVote ? 'cursor-pointer hover:shadow-lg hover:border-primary/50' : ''
                         } ${isFinished && match.winner === match.fighter1.id ? 'border-green-500 bg-green-500/10' : 'border-border'}`}
                         onClick={() => canVote && handleVote(match.id, match.fighter1.id)}
                       >
-                        <div className="flex items-center gap-4">
-                          <div className="w-14 h-14 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                            <User size={28} className="text-primary" />
+                        <div className="relative">
+                          {/* Photo Zone */}
+                          <div className="aspect-[3/4] bg-gray-200 flex items-center justify-center">
+                            <User size={56} className="text-gray-400" />
                           </div>
-                          <div className="flex-1">
-                            <h3 className="font-heading text-lg font-bold text-gray-900">{match.fighter1.name}</h3>
-                            <p className="text-sm text-gray-600 flex items-center gap-1">
-                              <MapPin size={14} />
-                              {match.fighter1.region}
-                            </p>
+                          {/* Info Zone - Compact at bottom */}
+                          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3">
+                            <h3 className="font-heading text-sm font-bold text-white truncate">{match.fighter1.name}</h3>
+                            <p className="text-[10px] text-gray-200 truncate">{match.fighter1.region}</p>
+                            <div className="flex items-center gap-2 mt-1.5">
+                              <span className="font-bold text-white text-sm">{votes1}</span>
+                              <span className="text-xs text-gray-300">{percentage1}%</span>
+                              {isFinished && match.winner === match.fighter1.id && (
+                                <Trophy size={14} className="text-green-400" />
+                              )}
+                            </div>
                           </div>
-                          <div className="text-right">
-                            <div className="font-bold text-2xl text-orange-500">{votes1}</div>
-                            <div className="text-xs text-gray-600">{percentage1}%</div>
-                            {isFinished && match.winner === match.fighter1.id && (
-                              <Trophy size={20} className="mt-1 text-green-600" />
-                            )}
-                          </div>
-                        </div>
-                        <div className="mt-3 w-full bg-gray-300 rounded-full h-2">
-                          <div className="bg-orange-500 h-2 rounded-full transition-all" style={{ width: `${percentage1}%` }} />
                         </div>
                       </div>
                       
-                      <div className="text-center">
-                        <span className="font-heading text-lg font-bold text-muted-foreground">VS</span>
+                      <div className="text-center flex-shrink-0">
+                        <Swords className="text-primary mx-auto mb-1" size={24} />
+                        <span className="font-heading text-sm font-bold text-muted-foreground block">VS</span>
                       </div>
                       
                       {/* Fighter 2 */}
                       <div
-                        className={`p-4 rounded-lg border-2 transition-all ${
+                        className={`flex-1 rounded-lg border-2 transition-all overflow-hidden ${
                           canVote ? 'cursor-pointer hover:shadow-lg hover:border-primary/50' : ''
                         } ${isFinished && match.winner === match.fighter2.id ? 'border-green-500 bg-green-500/10' : 'border-border'}`}
                         onClick={() => canVote && handleVote(match.id, match.fighter2.id)}
                       >
-                        <div className="flex items-center gap-4">
-                          <div className="w-14 h-14 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                            <User size={28} className="text-primary" />
+                        <div className="relative">
+                          {/* Photo Zone */}
+                          <div className="aspect-[3/4] bg-gray-200 flex items-center justify-center">
+                            <User size={56} className="text-gray-400" />
                           </div>
-                          <div className="flex-1">
-                            <h3 className="font-heading text-lg font-bold text-gray-900">{match.fighter2.name}</h3>
-                            <p className="text-sm text-gray-600 flex items-center gap-1">
-                              <MapPin size={14} />
-                              {match.fighter2.region}
-                            </p>
+                          {/* Info Zone - Compact at bottom */}
+                          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3">
+                            <h3 className="font-heading text-sm font-bold text-white truncate">{match.fighter2.name}</h3>
+                            <p className="text-[10px] text-gray-200 truncate">{match.fighter2.region}</p>
+                            <div className="flex items-center gap-2 mt-1.5">
+                              <span className="font-bold text-white text-sm">{votes2}</span>
+                              <span className="text-xs text-gray-300">{percentage2}%</span>
+                              {isFinished && match.winner === match.fighter2.id && (
+                                <Trophy size={14} className="text-green-400" />
+                              )}
+                            </div>
                           </div>
-                          <div className="text-right">
-                            <div className="font-bold text-2xl text-orange-500">{votes2}</div>
-                            <div className="text-xs text-gray-600">{percentage2}%</div>
-                            {isFinished && match.winner === match.fighter2.id && (
-                              <Trophy size={20} className="mt-1 text-green-600" />
-                            )}
-                          </div>
-                        </div>
-                        <div className="mt-3 w-full bg-gray-300 rounded-full h-2">
-                          <div className="bg-orange-500 h-2 rounded-full transition-all" style={{ width: `${percentage2}%` }} />
                         </div>
                       </div>
                     </div>
@@ -529,7 +530,154 @@ const PronosticsPageNew = () => {
                 );
               }
 
-              // Layout pour 3ème place et finale - même design que les quarts mais agrandi
+              // Layout spécial pour la FINALE
+              if (activeTab === 'finale') {
+                return (
+                  <motion.div
+                    key={match.id}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1, type: "spring" }}
+                    className="relative bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 rounded-2xl p-6 md:p-10 border-4 border-amber-400/60 shadow-2xl shadow-amber-500/20"
+                  >
+                    {/* Décoration coins dorés */}
+                    <div className="absolute top-0 left-0 w-20 h-20 bg-gradient-to-br from-amber-400/30 to-transparent rounded-tl-2xl" />
+                    <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-amber-400/30 to-transparent rounded-tr-2xl" />
+                    <div className="absolute bottom-0 left-0 w-20 h-20 bg-gradient-to-tr from-amber-400/30 to-transparent rounded-bl-2xl" />
+                    <div className="absolute bottom-0 right-0 w-20 h-20 bg-gradient-to-tl from-amber-400/30 to-transparent rounded-br-2xl" />
+
+                    {/* Trophy Badge Central */}
+                    <motion.div
+                      initial={{ scale: 0, rotate: -180 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
+                      className="absolute -top-8 left-1/2 -translate-x-1/2 z-20"
+                    >
+                      <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center shadow-xl border-4 border-white">
+                        <Trophy className="text-white" size={32} />
+                      </div>
+                    </motion.div>
+
+                    {/* Header */}
+                    <div className="text-center mb-8 mt-6">
+                      <h3 className="font-heading text-2xl md:text-3xl font-extrabold uppercase bg-gradient-to-r from-amber-600 via-orange-500 to-amber-600 bg-clip-text text-transparent mb-2">
+                        Grande Finale
+                      </h3>
+                      <div className="flex justify-center items-center gap-4">
+                        <span className="text-sm text-gray-600">{match.date}</span>
+                        {match.status === 'finished' && (
+                          <span className="px-4 py-1.5 bg-red-500/20 text-red-700 rounded-full text-sm font-bold border-2 border-red-300">
+                            Terminé
+                          </span>
+                        )}
+                        {match.status === 'live' && (
+                          <span className="px-4 py-1.5 bg-green-500/20 text-green-700 rounded-full text-sm font-bold border-2 border-green-300 animate-pulse">
+                            🔴 En Direct
+                          </span>
+                        )}
+                        {match.status === 'upcoming' && (
+                          <span className="px-4 py-1.5 bg-amber-500/20 text-amber-700 rounded-full text-sm font-bold border-2 border-amber-300">
+                            À venir
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Fighters */}
+                    <div className="flex items-center gap-8">
+                      {/* Fighter 1 */}
+                      <motion.div 
+                        whileHover={{ scale: 1.02 }}
+                        className={`flex-1 rounded-xl border-4 overflow-hidden transition-all shadow-xl ${
+                          canVote ? 'cursor-pointer hover:shadow-2xl hover:border-amber-500' : ''
+                        } ${isFinished && match.winner === match.fighter1.id ? 'border-amber-500 ring-4 ring-amber-300 shadow-amber-500/50' : 'border-amber-300'}`}
+                        onClick={() => canVote && handleVote(match.id, match.fighter1.id)}
+                      >
+                        <div className="relative">
+                          {/* Photo Zone - Plus grande pour la finale */}
+                          <div className="aspect-[3/4] bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                            <User size={96} className="text-gray-400" />
+                          </div>
+                          {/* Winner Crown */}
+                          {isFinished && match.winner === match.fighter1.id && (
+                            <motion.div
+                              initial={{ y: -20, opacity: 0 }}
+                              animate={{ y: 0, opacity: 1 }}
+                              className="absolute top-4 left-1/2 -translate-x-1/2"
+                            >
+                              <Trophy className="text-amber-400 drop-shadow-lg" size={48} />
+                            </motion.div>
+                          )}
+                          {/* Info Zone */}
+                          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 via-black/80 to-transparent p-5">
+                            <p className="font-heading font-bold text-lg md:text-xl text-white truncate">{match.fighter1.name}</p>
+                            <p className="text-xs text-amber-200 truncate flex items-center gap-1">
+                              <MapPin size={12} />
+                              {match.fighter1.region}
+                            </p>
+                            <div className="flex items-center gap-3 mt-3">
+                              <span className="font-bold text-amber-400 text-2xl">{votes1}</span>
+                              <span className="text-sm text-gray-300">{percentage1}%</span>
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                      
+                      {/* VS Badge Premium */}
+                      <motion.div 
+                        animate={{ rotate: [0, 5, -5, 0] }}
+                        transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+                        className="flex-shrink-0 flex flex-col items-center gap-3"
+                      >
+                        <div className="w-20 h-20 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center shadow-2xl border-4 border-white">
+                          <Swords className="text-white" size={40} />
+                        </div>
+                        <span className="font-heading text-lg font-extrabold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">VS</span>
+                      </motion.div>
+                      
+                      {/* Fighter 2 */}
+                      <motion.div 
+                        whileHover={{ scale: 1.02 }}
+                        className={`flex-1 rounded-xl border-4 overflow-hidden transition-all shadow-xl ${
+                          canVote ? 'cursor-pointer hover:shadow-2xl hover:border-amber-500' : ''
+                        } ${isFinished && match.winner === match.fighter2.id ? 'border-amber-500 ring-4 ring-amber-300 shadow-amber-500/50' : 'border-amber-300'}`}
+                        onClick={() => canVote && handleVote(match.id, match.fighter2.id)}
+                      >
+                        <div className="relative">
+                          {/* Photo Zone */}
+                          <div className="aspect-[3/4] bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                            <User size={96} className="text-gray-400" />
+                          </div>
+                          {/* Winner Crown */}
+                          {isFinished && match.winner === match.fighter2.id && (
+                            <motion.div
+                              initial={{ y: -20, opacity: 0 }}
+                              animate={{ y: 0, opacity: 1 }}
+                              className="absolute top-4 left-1/2 -translate-x-1/2"
+                            >
+                              <Trophy className="text-amber-400 drop-shadow-lg" size={48} />
+                            </motion.div>
+                          )}
+                          {/* Info Zone */}
+                          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 via-black/80 to-transparent p-5">
+                            <p className="font-heading font-bold text-lg md:text-xl text-white truncate">{match.fighter2.name}</p>
+                            <p className="text-xs text-amber-200 truncate flex items-center gap-1">
+                              <MapPin size={12} />
+                              {match.fighter2.region}
+                            </p>
+                            <div className="flex items-center gap-3 mt-3">
+                              <span className="font-bold text-amber-400 text-2xl">{votes2}</span>
+                              <span className="text-sm text-gray-300">{percentage2}%</span>
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    </div>
+                  </motion.div>
+                );
+              }
+
+              // Layout pour 3ème place - design standard agrandi
               return (
                 <motion.div
                   key={match.id}
@@ -562,65 +710,61 @@ const PronosticsPageNew = () => {
                   <div className="flex items-center gap-6">
                     {/* Fighter 1 */}
                     <div 
-                      className={`flex-1 p-6 rounded-lg border-2 ${
-                        isFinished && match.winner === match.fighter1.id ? 'border-green-500 bg-green-500/10' : 'border-border'
-                      }`}
+                      className={`flex-1 rounded-lg border-2 overflow-hidden transition-all ${
+                        canVote ? 'cursor-pointer hover:shadow-lg hover:border-primary/50' : ''
+                      } ${isFinished && match.winner === match.fighter1.id ? 'border-green-500 bg-green-500/10' : 'border-border'}`}
+                      onClick={() => canVote && handleVote(match.id, match.fighter1.id)}
                     >
-                      <div className="text-center space-y-3">
-                        <p className="font-heading font-bold text-lg text-gray-900">{match.fighter1.name}</p>
-                        <p className="text-sm text-gray-600">{match.fighter1.region}</p>
-                        <div className="flex items-center justify-center gap-2">
-                          <span className="font-bold text-orange-500 text-2xl">{votes1}</span>
-                          {isFinished && match.winner === match.fighter1.id && (
-                            <Trophy size={20} className="text-green-600" />
-                          )}
+                      <div className="relative">
+                        {/* Photo Zone */}
+                        <div className="aspect-[3/4] bg-gray-200 flex items-center justify-center">
+                          <User size={72} className="text-gray-400" />
                         </div>
-                        <div className="w-full bg-gray-300 rounded-full h-2">
-                          <div className="bg-orange-500 h-2 rounded-full" style={{ width: `${percentage1}%` }} />
+                        {/* Info Zone - Compact at bottom */}
+                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-4">
+                          <p className="font-heading font-bold text-base text-white truncate">{match.fighter1.name}</p>
+                          <p className="text-xs text-gray-200 truncate">{match.fighter1.region}</p>
+                          <div className="flex items-center gap-2 mt-2">
+                            <span className="font-bold text-white text-lg">{votes1}</span>
+                            <span className="text-sm text-gray-300">{percentage1}%</span>
+                            {isFinished && match.winner === match.fighter1.id && (
+                              <Trophy size={18} className="text-green-400" />
+                            )}
+                          </div>
                         </div>
-                        {canVote && (
-                          <button
-                            onClick={() => handleVote(match.id, match.fighter1.id)}
-                            className="w-full mt-4 px-4 py-2 bg-primary text-primary-foreground font-heading font-bold rounded-lg hover:bg-primary/90 transition-all hover:shadow-lg"
-                          >
-                            Pronostiquer
-                          </button>
-                        )}
                       </div>
                     </div>
                     
                     {/* VS Badge with Swords Icon */}
                     <div className="flex-shrink-0 flex flex-col items-center gap-2">
-                      <Swords className="text-primary" size={32} />
-                      <span className="font-heading text-sm font-bold text-muted-foreground">VS</span>
+                      <Swords className="text-primary" size={40} />
+                      <span className="font-heading text-base font-bold text-muted-foreground">VS</span>
                     </div>
                     
                     {/* Fighter 2 */}
                     <div 
-                      className={`flex-1 p-6 rounded-lg border-2 ${
-                        isFinished && match.winner === match.fighter2.id ? 'border-green-500 bg-green-500/10' : 'border-border'
-                      }`}
+                      className={`flex-1 rounded-lg border-2 overflow-hidden transition-all ${
+                        canVote ? 'cursor-pointer hover:shadow-lg hover:border-primary/50' : ''
+                      } ${isFinished && match.winner === match.fighter2.id ? 'border-green-500 bg-green-500/10' : 'border-border'}`}
+                      onClick={() => canVote && handleVote(match.id, match.fighter2.id)}
                     >
-                      <div className="text-center space-y-3">
-                        <p className="font-heading font-bold text-lg text-gray-900">{match.fighter2.name}</p>
-                        <p className="text-sm text-gray-600">{match.fighter2.region}</p>
-                        <div className="flex items-center justify-center gap-2">
-                          <span className="font-bold text-orange-500 text-2xl">{votes2}</span>
-                          {isFinished && match.winner === match.fighter2.id && (
-                            <Trophy size={20} className="text-green-600" />
-                          )}
+                      <div className="relative">
+                        {/* Photo Zone */}
+                        <div className="aspect-[3/4] bg-gray-200 flex items-center justify-center">
+                          <User size={72} className="text-gray-400" />
                         </div>
-                        <div className="w-full bg-gray-300 rounded-full h-2">
-                          <div className="bg-orange-500 h-2 rounded-full" style={{ width: `${percentage2}%` }} />
+                        {/* Info Zone - Compact at bottom */}
+                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-4">
+                          <p className="font-heading font-bold text-base text-white truncate">{match.fighter2.name}</p>
+                          <p className="text-xs text-gray-200 truncate">{match.fighter2.region}</p>
+                          <div className="flex items-center gap-2 mt-2">
+                            <span className="font-bold text-white text-lg">{votes2}</span>
+                            <span className="text-sm text-gray-300">{percentage2}%</span>
+                            {isFinished && match.winner === match.fighter2.id && (
+                              <Trophy size={18} className="text-green-400" />
+                            )}
+                          </div>
                         </div>
-                        {canVote && (
-                          <button
-                            onClick={() => handleVote(match.id, match.fighter2.id)}
-                            className="w-full mt-4 px-4 py-2 bg-primary text-primary-foreground font-heading font-bold rounded-lg hover:bg-primary/90 transition-all hover:shadow-lg"
-                          >
-                            Pronostiquer
-                          </button>
-                        )}
                       </div>
                     </div>
                   </div>

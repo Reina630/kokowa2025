@@ -70,17 +70,17 @@ const FighterCard = ({ fighter, onSupportSuccess }: { fighter: Fighter; onSuppor
         viewport={{ once: true }}
         className="fighter-card mx-auto w-full bg-white rounded-2xl shadow-md overflow-hidden"
       >
-        {/* Fighter Placeholder */}
         <div className="relative flex items-center justify-center bg-gray-100 h-56 sm:h-64">
           <div className="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center">
             <User size={40} className="text-gray-400" />
           </div>
-          
-          {/* Status Badge */}
+
           <div className="absolute top-3 right-3">
             <span
               className={`px-3 py-1 rounded-full text-[10px] font-heading uppercase tracking-wide font-semibold ${
-                fighter.status === "active" ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"
+                fighter.status === "active"
+                  ? "bg-green-100 text-green-600"
+                  : "bg-red-100 text-red-600"
               }`}
             >
               {fighter.status === "active" ? "EN LICE" : "ÉLIMINÉ"}
@@ -88,7 +88,6 @@ const FighterCard = ({ fighter, onSupportSuccess }: { fighter: Fighter; onSuppor
           </div>
         </div>
 
-        {/* Fighter Info */}
         <div className="px-4 py-3 bg-white">
           <h3 className="font-heading text-lg font-bold uppercase text-gray-900 mb-2 tracking-tight">
             {fighter.name}
@@ -100,6 +99,19 @@ const FighterCard = ({ fighter, onSupportSuccess }: { fighter: Fighter; onSuppor
             </p>
           </div>
 
+          <div className="flex items-center gap-1.5 text-sm mb-3">
+            <Heart
+              size={16}
+              className={
+                fighter.supports > 0
+                  ? "text-orange-500 fill-orange-500"
+                  : "text-gray-400"
+              }
+            />
+            <span className="text-gray-900 font-normal">
+              <AnimatedCounter value={fighter.supports} /> soutiens
+            </span>
+          </div>
           <div className="flex flex-col gap-2">
             <motion.button
               whileTap={{ scale: 0.95 }}
@@ -116,13 +128,6 @@ const FighterCard = ({ fighter, onSupportSuccess }: { fighter: Fighter; onSuppor
             >
               Gratifier
             </motion.button>
-          </div>
-
-          <div className="flex items-center gap-1.5 text-sm mt-2">
-            <Heart size={16} className={fighter.supports > 0 ? "text-orange-500 fill-orange-500" : "text-gray-400"} />
-            <span className="text-gray-900 font-normal">
-              <AnimatedCounter value={fighter.supports} /> soutiens
-            </span>
           </div>
         </div>
       </motion.div>
