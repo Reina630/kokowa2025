@@ -48,6 +48,18 @@ const lutteursService = {
     const response = await api.post('/lutteur_gratifier', data);
     return response.data;
   },
+
+  // Inscription d'un nouvel utilisateur
+  register: async (data: {
+    first_name: string;
+    telephone: string;
+    pays: string;
+    region: string;
+    favoris: string;
+  }) => {
+    const response = await api.post('/auth/register', data);
+    return response.data;
+  },
 };
 
 export default lutteursService;
